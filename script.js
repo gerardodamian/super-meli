@@ -236,14 +236,27 @@ class CatalogoApp {
         this.renderProductos();
         this.renderOfertas();
         this.setupEventListeners();
+        this.cargarDatosCliente();
     }
 
     setupEventListeners() {
         // Botón de búsqueda
+        const clearBtn = document.getElementById("clearDataBtn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+                localStorage.removeItem("cliente_nombre");
+                localStorage.removeItem("cliente_direccion");
+                document.getElementById("inputNombre").value = "";
+                document.getElementById("inputDireccion").value = "";
+            });
+        }
+
         const searchBtn = document.getElementById("searchBtn");
         if (searchBtn) {
             searchBtn.addEventListener("click", () => {
-                const searchModal = new bootstrap.Modal(document.getElementById("searchModal"));
+                const searchModal = new bootstrap.Modal(
+                    document.getElementById("searchModal")
+                );
                 searchModal.show();
                 setTimeout(() => {
                     const searchInput = document.getElementById("searchInput");
@@ -257,7 +270,9 @@ class CatalogoApp {
         if (cartBtn) {
             cartBtn.addEventListener("click", () => {
                 this.renderCartModal();
-                const cartModal = new bootstrap.Modal(document.getElementById("cartModal"));
+                const cartModal = new bootstrap.Modal(
+                    document.getElementById("cartModal")
+                );
                 cartModal.show();
             });
         }
@@ -270,7 +285,7 @@ class CatalogoApp {
                 this.renderSearchResults();
             });
         }
-        
+
         // No necesitamos más event listeners para cerrar modales
         // Bootstrap maneja eso automáticamente con data-bs-dismiss="modal"
     }
@@ -282,13 +297,15 @@ class CatalogoApp {
 
     filterProducts(products) {
         if (!this.searchTerm) return products;
-        
+
         return products.filter((product) => {
-            const nombre = product.name || product.nombre || '';
-            const categoria = product.category || '';
-            
-            return nombre.toLowerCase().includes(this.searchTerm) || 
-                   categoria.toLowerCase().includes(this.searchTerm);
+            const nombre = product.name || product.nombre || "";
+            const categoria = product.category || "";
+
+            return (
+                nombre.toLowerCase().includes(this.searchTerm) ||
+                categoria.toLowerCase().includes(this.searchTerm)
+            );
         });
     }
 
@@ -296,22 +313,24 @@ class CatalogoApp {
     renderSearchResults() {
         const resultsContainer = document.getElementById("searchResults");
         if (!resultsContainer) return;
-        
-        const searchTerm = this.searchTerm ? this.searchTerm.toLowerCase().trim() : '';
+
+        const searchTerm = this.searchTerm
+            ? this.searchTerm.toLowerCase().trim()
+            : "";
 
         if (!searchTerm) {
             resultsContainer.innerHTML = "";
             return;
         }
 
-        const allProducts = [...this.productos]; 
-        const filteredProducts = allProducts.filter(
-            (product) => {
-                const name = product.name ? product.name.toLowerCase() : '';
-                const category = product.category ? product.category.toLowerCase() : '';
-                return name.includes(searchTerm) || category.includes(searchTerm);
-            }
-        );
+        const allProducts = [...this.productos];
+        const filteredProducts = allProducts.filter((product) => {
+            const name = product.name ? product.name.toLowerCase() : "";
+            const category = product.category
+                ? product.category.toLowerCase()
+                : "";
+            return name.includes(searchTerm) || category.includes(searchTerm);
+        });
 
         if (filteredProducts.length === 0) {
             resultsContainer.innerHTML = `
@@ -329,10 +348,7 @@ class CatalogoApp {
                 (product) => `
                 <div class="card mb-3" onclick="app.agregarAlCarrito(${JSON.stringify(
                     product
-                ).replace(
-                    /"/g,
-                    "&quot;"
-                )}); app.closeSearchModal();">
+                ).replace(/"/g, "&quot;")}); app.closeSearchModal();">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-4 col-md-3">
@@ -614,7 +630,18 @@ class CatalogoApp {
         cartItems.style.display = "block";
         cartFooter.style.display = "block";
 
-        cartItems.innerHTML = this.carrito
+        // Agregar botón "Vaciar carrito" en la parte superior
+        cartItems.innerHTML = `
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="app.vaciarCarrito()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2 me-1"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                Vaciar carrito
+            </button>
+        </div>
+        `;
+
+        // Añadir los productos del carrito
+        cartItems.innerHTML += this.carrito
             .map(
                 (item, index) => `
 <div class="card mb-3">
@@ -634,15 +661,15 @@ class CatalogoApp {
                 <div class="d-flex flex-column align-items-end">
                     <div class="btn-group btn-group-sm mb-2">
                         <button type="button" class="btn btn-outline-secondary" onclick="app.cambiarCantidad(${index}, -1)">
-                            <i data-lucide="minus" width="16" height="16"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus"><path d="M5 12h14"/></svg>
                         </button>
                         <span class="btn btn-outline-secondary disabled">${item.cantidad}</span>
                         <button type="button" class="btn btn-outline-secondary" onclick="app.cambiarCantidad(${index}, 1)">
-                            <i data-lucide="plus" width="16" height="16"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                         </button>
                     </div>
                     <button type="button" class="btn btn-outline-danger btn-sm" onclick="app.quitarDelCarrito(${index})">
-                        <i data-lucide="trash-2" width="16" height="16"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                     </button>
                 </div>
             </div>
@@ -650,25 +677,86 @@ class CatalogoApp {
     </div>
 </div>
 `
-        )
-        .join("");
+            )
+            .join("");
 
+    // Actualizar el total
     const total = this.calcularTotal();
     totalAmount.textContent = `$${total}`;
 
-    // Actualizar el botón de WhatsApp
-    whatsappBtn.innerHTML = `
-<i data-lucide="message-circle" class="me-2"></i>
-Comprar por WhatsApp
-`;
-    whatsappBtn.href = this.generarMensajeWhatsApp();
-    whatsappBtn.className = "btn btn-success w-100";
+    // Mostrar formulario de checkout y botones
+    cartFooter.innerHTML = `
+        <form id="checkoutForm">
+            <div class="mb-3">
+                <label for="inputNombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="inputNombre" placeholder="Tu nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="inputDireccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="inputDireccion" placeholder="Tu dirección" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Método de entrega</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodoEntrega" id="radioDelivery" value="delivery" checked>
+                        <label class="form-check-label" for="radioDelivery">🚚 Delivery</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="metodoEntrega" id="radioRetiro" value="retiro">
+                        <label class="form-check-label" for="radioRetiro">🛍️ Retiro en el local</label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end align-items-center mb-3">
+                <span class="me-2 fw-bold">Total:</span>
+                <span class="fs-4 fw-bold" id="totalAmount">$${total}</span>
+            </div>
+            <div class="d-flex flex-column gap-2 mt-3">
+                <button type="button" class="btn btn-success w-100" id="whatsappBtn" onclick="window.open(app.generarMensajeWhatsApp(), '_blank')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle me-2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    Comprar por WhatsApp
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="clearDataBtn" onclick="app.borrarDatosGuardados()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eraser me-2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+                    Borrar datos guardados
+                </button>
+            </div>
+        </form>
+    `;
 
-    // Reinicializar iconos
-    if (typeof lucide !== "undefined") {
-        lucide.createIcons();
-    }
+    // Cargar datos del cliente guardados
+    this.cargarDatosCliente();
 }
+
+    // Método para vaciar el carrito completo
+    vaciarCarrito() {
+        // Confirmar antes de vaciar
+        if (confirm('¿Estás seguro que deseas vaciar el carrito?')) {
+            this.carrito = [];
+            this.updateCartBadge();
+            this.renderCartModal();
+            
+            // Mostrar notificación
+            this.showAddToCartNotification('Carrito vaciado correctamente');
+        }
+    }
+
+    // Método para borrar los datos guardados del cliente
+    borrarDatosGuardados() {
+        localStorage.removeItem("cliente_nombre");
+        localStorage.removeItem("cliente_direccion");
+        
+        // Limpiar los campos del formulario
+        const nombreInput = document.getElementById("inputNombre");
+        const direccionInput = document.getElementById("inputDireccion");
+        
+        if (nombreInput) nombreInput.value = "";
+        if (direccionInput) direccionInput.value = "";
+        
+        // Mostrar notificación
+        this.showAddToCartNotification('Datos guardados eliminados');
+    }
 
     // Función para calcular el total del carrito
     calcularTotal() {
@@ -682,6 +770,27 @@ Comprar por WhatsApp
     // Función para generar el mensaje de WhatsApp
     generarMensajeWhatsApp() {
         if (this.carrito.length === 0) return "#";
+
+        const nombreInput = document.getElementById("inputNombre");
+        const direccionInput = document.getElementById("inputDireccion");
+        const metodoEntrega = document.querySelector(
+            "input[name='metodoEntrega']:checked"
+        );
+
+        const nombre = nombreInput ? nombreInput.value.trim() : "";
+        const direccion = direccionInput ? direccionInput.value.trim() : "";
+        const entrega = metodoEntrega ? metodoEntrega.value : "";
+
+        if (!nombre || !direccion || !entrega) {
+            alert(
+                "Por favor completá tu nombre, dirección y seleccioná si es delivery o retiro en el local."
+            );
+            return "#";
+        }
+
+        localStorage.setItem("cliente_nombre", nombre);
+        localStorage.setItem("cliente_direccion", direccion);
+        localStorage.setItem("cliente_entrega", entrega);
 
         const mensaje = encodeURIComponent(
             `¡Hola! Quiero realizar el siguiente pedido en Autoservicio Sagrado Corazón de Jesús:\n\n` +
@@ -698,16 +807,97 @@ Comprar por WhatsApp
                     .join("\n\n") +
                 `\n\n*TOTAL A PAGAR: $${this.calcularTotal()}*\n\n` +
                 `Datos para la entrega:\n` +
-                `• Nombre:\n` +
-                `• Dirección:\n` +
-                `• Método de pago:\n\n` +
+                `• Nombre: ${nombre}\n` +
+                `• Dirección: ${direccion}\n` +
+                `• Método de entrega: ${
+                    entrega === "delivery"
+                        ? "🚚 Delivery a domicilio"
+                        : "🛍️ Retiro en el local"
+                }\n\n` +
                 `¡Gracias!`
         );
 
-        // Reemplaza este número por el número de WhatsApp del negocio
-        const numeroWhatsApp = "5493517181975"; // Ejemplo de número argentino
+        const numeroWhatsApp = "5493517181975";
+        const url = `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
 
-        return `https://wa.me/${numeroWhatsApp}?text=${mensaje}`;
+        // Mostrar mensaje de confirmación
+        this.showOrderConfirmation();
+        
+        // Abrir WhatsApp y vaciar carrito, cerrar modal
+        setTimeout(() => {
+            this.carrito = [];
+            this.renderCartModal();
+            this.updateCartBadge(); // Corregido: era actualizarBadgeCarrito
+            const modal = bootstrap.Modal.getInstance(
+                document.getElementById("cartModal")
+            );
+            if (modal) modal.hide();
+        }, 1000);
+
+        return url;
+    }
+
+    // Añadir este nuevo método para mostrar la confirmación
+    showOrderConfirmation() {
+        // Crear el elemento de confirmación
+        const confirmationElement = document.createElement('div');
+        confirmationElement.className = 'order-confirmation';
+        confirmationElement.innerHTML = `
+            <div class="order-confirmation-content">
+                <i data-lucide="check-circle" width="48" height="48" class="text-success"></i>
+                <h4>¡Pedido enviado!</h4>
+                <p>Tu pedido está siendo procesado.</p>
+            </div>
+        `;
+        
+        // Agregar estilos inline para el elemento
+        confirmationElement.style.position = 'fixed';
+        confirmationElement.style.top = '50%';
+        confirmationElement.style.left = '50%';
+        confirmationElement.style.transform = 'translate(-50%, -50%)';
+        confirmationElement.style.background = 'white';
+        confirmationElement.style.padding = '2rem';
+        confirmationElement.style.borderRadius = '0.5rem';
+        confirmationElement.style.boxShadow = '0 0.5rem 1rem rgba(0,0,0,0.15)';
+        confirmationElement.style.zIndex = '9999';
+        confirmationElement.style.textAlign = 'center';
+        confirmationElement.style.opacity = '0';
+        confirmationElement.style.transition = 'opacity 0.3s ease';
+        
+        // Agregar al DOM
+        document.body.appendChild(confirmationElement);
+        
+        // Inicializar iconos
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+        }
+        
+        // Mostrar con animación
+        setTimeout(() => {
+            confirmationElement.style.opacity = '1';
+        }, 10);
+        
+        // Ocultar después de 3 segundos
+        setTimeout(() => {
+            confirmationElement.style.opacity = '0';
+            setTimeout(() => {
+                // Eliminar elemento después de la transición
+                if (confirmationElement.parentNode) {
+                    confirmationElement.parentNode.removeChild(confirmationElement);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Cargar datos del cliente al iniciar
+    cargarDatosCliente() {
+        const nombre = localStorage.getItem("cliente_nombre") || "";
+        const direccion = localStorage.getItem("cliente_direccion") || "";
+        const nombreInput = document.getElementById("inputNombre");
+        const direccionInput = document.getElementById("inputDireccion");
+
+        if (nombreInput) nombreInput.value = nombre;
+        if (direccionInput) direccionInput.value = direccion;
     }
 
     // Función para mostrar notificación cuando se agrega un producto

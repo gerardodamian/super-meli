@@ -1,170 +1,352 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autoservicio Sagrado Corazón de Jesús</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Autoservicio Sagrado Corazón de Jesús</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
 
-    <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="style.css">
+        <!-- CSS Personalizado -->
+        <link rel="stylesheet" href="style.css" />
 
-    <!-- Iconos de Lucide -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-</head>
-<body>
-    <!-- Header con Bootstrap -->
-    <header class="bg-white shadow-sm sticky-top">
-        <div class="container py-2">
-            <div class="row align-items-center">
-                <div class="col-md-6 d-flex align-items-center">
-                    <img src="multimedia/logo.png" alt="Logo Autoservicio Sagrado Corazón"
-                         class="me-3 rounded-circle border" width="60" height="60"
-                         onerror="this.src='https://via.placeholder.com/60/f8f9fa/dc3545?text=SCJ'">
-                    <h1 class="h4 mb-0 text-truncate">Autoservicio Sagrado Corazón</h1>
-                </div>
-                <div class="col-md-6 mt-3 mt-md-0">
-                    <div class="d-flex justify-content-md-end justify-content-center gap-3">
-                        <button class="btn btn-outline-secondary d-flex align-items-center" id="searchBtn">
-                            <i data-lucide="search" class="me-2" width="18" height="18"></i>
-                            <span>Buscar</span>
-                        </button>
-                        <button class="btn btn-outline-primary d-flex align-items-center position-relative" id="cartBtn">
-                            <i data-lucide="shopping-cart" class="me-2" width="18" height="18"></i>
-                            <span>Carrito</span>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartBadge">0</span>
-                        </button>
+        <!-- Iconos de Lucide -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    </head>
+    <body>
+        <!-- Header con Bootstrap -->
+        <header class="bg-white shadow-sm sticky-top">
+            <div class="container py-2">
+                <div class="row align-items-center">
+                    <div class="col-md-6 d-flex align-items-center justify-content-center justify-content-md-start">
+                        <img
+                            src="multimedia/logo.png"
+                            alt="Logo Autoservicio Sagrado Corazón"
+                            class="me-3 rounded-circle border"
+                            width="60"
+                            height="60"
+                            onerror="this.src='https://via.placeholder.com/60/f8f9fa/dc3545?text=SCJ'"
+                        />
+                        <h1 class="mb-0 text-wrap">Autoservicio Sagrado Corazón de Jesús</h1>
+                    </div>
+                    <div class="col-md-6 mt-2 mt-md-0">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-2 gap-md-3">
+                            <button
+                                class="btn btn-outline-secondary d-flex align-items-center"
+                                id="searchBtn"
+                            >
+                                <i
+                                    data-lucide="search"
+                                    class="me-2"
+                                    width="18"
+                                    height="18"
+                                ></i>
+                                <span>Buscar</span>
+                            </button>
+                            <button
+                                class="btn btn-outline-primary d-flex align-items-center position-relative"
+                                id="cartBtn"
+                            >
+                                <i
+                                    data-lucide="shopping-cart"
+                                    class="me-2"
+                                    width="18"
+                                    height="18"
+                                ></i>
+                                <span>Carrito</span>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    id="cartBadge"
+                                    >0</span
+                                >
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Contenido principal -->
-    <main class="container py-4">
-        <section class="mb-5">
-            <h2 class="text-danger border-bottom pb-2 mb-4">🔥 Ofertas Especiales</h2>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="ofertasGrid">
-                <!-- Las ofertas se generan dinámicamente -->
-            </div>
-        </section>
+        <!-- Contenido principal -->
+        <main class="container py-4">
+            <section class="mb-5">
+                <h2 class="text-danger border-bottom pb-2 mb-4">
+                    🔥 Ofertas Especiales
+                </h2>
+                <div
+                    class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"
+                    id="ofertasGrid"
+                >
+                    <!-- Las ofertas se generan dinámicamente -->
+                </div>
+            </section>
 
-        <section class="mb-5">
-            <h2 class="border-bottom pb-2 mb-4">📦 Todos los productos</h2>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="productosGrid">
-                <!-- Los productos se generan dinámicamente -->
-            </div>
-        </section>
+            <section class="mb-5">
+                <h2 class="border-bottom pb-2 mb-4">📦 Todos los productos</h2>
+                <div
+                    class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"
+                    id="productosGrid"
+                >
+                    <!-- Los productos se generan dinámicamente -->
+                </div>
+            </section>
 
-        <section>
-            <h2 class="border-bottom pb-2 mb-4">📍 ¿Dónde estamos?</h2>
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card shadow-sm">
-                        <img src="multimedia/foto-frente.png" alt="Frente del local" class="card-img-top" style="height: 250px; object-fit: cover;"
-                             onerror="this.src='https://via.placeholder.com/800x400/f8f9fa/6c757d?text=Frente+del+Local'">
-                        <div class="card-body">
-                            <h3 class="h5 card-title">Nuestro Local</h3>
-                            <p class="card-text">Te esperamos con los mejores productos y precios.</p>
-                            <div class="bg-light p-3 rounded">
-                                <p><strong>Horarios:</strong> Lunes a Domingo 8:00 - 22:00</p>
-                                <p><strong>Dirección:</strong> Calle Ejemplo 123, Barrio Centro</p>
+            <section>
+                <h2 class="border-bottom pb-2 mb-4">📍 ¿Dónde estamos?</h2>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm">
+                            <img
+                                src="multimedia/foto-frente.png"
+                                alt="Frente del local"
+                                class="card-img-top"
+                                style="height: 250px; object-fit: cover"
+                                onerror="this.src='https://via.placeholder.com/800x400/f8f9fa/6c757d?text=Frente+del+Local'"
+                            />
+                            <div class="card-body">
+                                <h3 class="h5 card-title">Nuestro Local</h3>
+                                <p class="card-text">
+                                    Te esperamos con los mejores productos y
+                                    precios.
+                                </p>
+                                <div class="bg-light p-3 rounded">
+                                    <p>
+                                        <strong>Horarios:</strong> Lunes a
+                                        Domingo 8:00 - 22:00
+                                    </p>
+                                    <p>
+                                        <strong>Dirección:</strong> En el Corazón de Las Talas
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ratio ratio-4x3 h-100">
-                        <iframe class="w-100 h-100 rounded"
+                    <div class="col-lg-6">
+                        <div class="ratio ratio-4x3 h-100">
+                            <iframe
+                                class="w-100 h-100 rounded"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d219.26977269138928!2d-67.12093574256392!3d-28.439878198990222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x942743925ffa3201%3A0x6d3bea966a23190d!2sAutoservicio%20Sagrado%20Corazon%20De%20Jesus!5e0!3m2!1ses!2sar!4v1749313488398!5m2!1ses!2sar"
-                                style="border:0;" allowfullscreen="" loading="lazy">
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer con Bootstrap -->
-    <footer class="bg-light py-4 mt-auto">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 mb-3 mb-md-0 d-flex align-items-center">
-                    <img src="multimedia/logo.png" alt="Logo" width="50" height="50" class="me-2"
-                         onerror="this.src='https://via.placeholder.com/50/f8f9fa/dc3545?text=SCJ'">
-                    <span class="text-muted">© 2023 Autoservicio Sagrado Corazón de Jesús</span>
-                </div>
-                <div class="col-md-6">
-                    <ul class="list-inline text-md-end mb-0">
-                        <li class="list-inline-item"><a href="#" class="text-decoration-none">Política de Privacidad</a></li>
-                        <li class="list-inline-item"><a href="#" class="text-decoration-none">Términos</a></li>
-                        <li class="list-inline-item">
-                            <a href="https://api.whatsapp.com/send?phone=5491123456789" class="text-decoration-none" target="_blank">
-                                <i data-lucide="whatsapp" width="18" height="18"></i> Contáctanos
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Modal del carrito -->
-    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tu Carrito</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="emptyCart" class="text-center py-5">
-                        <i data-lucide="shopping-bag" width="48" height="48" class="text-muted mb-3"></i>
-                        <p class="lead">Tu carrito está vacío</p>
-                        <span class="text-muted">Agrega productos para continuar</span>
-                    </div>
-                    <div id="cartItems" style="display: none;"></div>
-                    <div id="cartFooter" class="mt-4 pt-3 border-top" style="display: none;">
-                        <div class="d-flex justify-content-end align-items-center mb-3">
-                            <span class="me-2 fw-bold">Total:</span>
-                            <span class="fs-4 fw-bold" id="totalAmount">$0</span>
+                                style="border: 0"
+                                allowfullscreen=""
+                                loading="lazy"
+                            >
+                            </iframe>
                         </div>
-                        <a href="#" class="btn btn-success w-100" id="whatsappBtn">
-                            <i data-lucide="message-circle" class="me-2"></i>
-                            Comprar por WhatsApp
-                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer con Bootstrap -->
+        <footer class="bg-light py-4 mt-auto">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div
+                        class="col-md-6 mb-3 mb-md-0 d-flex align-items-center"
+                    >
+                        <img
+                            src="multimedia/logo.png"
+                            alt="Logo"
+                            width="50"
+                            height="50"
+                            class="me-2"
+                            onerror="this.src='https://via.placeholder.com/50/f8f9fa/dc3545?text=SCJ'"
+                        />
+                        <span class="text-muted"
+                            >© 2023 Autoservicio Sagrado Corazón de Jesús</span
+                        >
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-inline text-md-end mb-0">
+                            <li class="list-inline-item">
+                                <a href="#" class="text-decoration-none"
+                                    >Política de Privacidad</a
+                                >
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#" class="text-decoration-none"
+                                    >Términos</a
+                                >
+                            </li>
+                            <li class="list-inline-item">
+                                <a
+                                    href="https://api.whatsapp.com/send?phone=5491123456789"
+                                    class="text-decoration-none"
+                                    target="_blank"
+                                >
+                                    <i
+                                        data-lucide="whatsapp"
+                                        width="18"
+                                        height="18"
+                                    ></i>
+                                    Contáctanos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal del carrito -->
+        <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tu Carrito</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="emptyCart" class="text-center py-5">
+                            <i
+                                data-lucide="shopping-bag"
+                                width="48"
+                                height="48"
+                                class="text-muted mb-3"
+                            ></i>
+                            <p class="lead">Tu carrito está vacío</p>
+                            <span class="text-muted"
+                                >Agrega productos para continuar</span
+                            >
+                        </div>
+                        <div id="cartItems" style="display: none"></div>
+                        <div
+                            id="cartFooter"
+                            class="mt-4 pt-3 border-top"
+                            style="display: none"
+                        >
+                            <div
+                                class="d-flex justify-content-end align-items-center mb-3"
+                            >
+                                <span class="me-2 fw-bold">Total:</span>
+                                <span class="fs-4 fw-bold" id="totalAmount"
+                                    >$0</span
+                                >
+                            </div>
+                            <form id="checkoutForm">
+                                <input
+                                    type="text"
+                                    id="inputNombre"
+                                    placeholder="Tu nombre"
+                                />
+                                <input
+                                    type="text"
+                                    id="inputDireccion"
+                                    placeholder="Dirección de entrega"
+                                />
+                            </form>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="metodoEntrega"
+                                    id="entregaDelivery"
+                                    value="delivery"
+                                />
+                                <label
+                                    class="form-check-label"
+                                    for="entregaDelivery"
+                                    >Delivery</label
+                                >
+                            </div>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="metodoEntrega"
+                                    id="entregaLocal"
+                                    value="local"
+                                />
+                                <label
+                                    class="form-check-label"
+                                    for="entregaLocal"
+                                    >Retiro en el local</label
+                                >
+                            </div>
+
+                            <button
+                                class="btn btn-outline-danger w-100 mt-2"
+                                id="clearDataBtn"
+                            >
+                                Borrar datos guardados
+                            </button>
+
+                            <a
+                                href="#"
+                                class="btn btn-success w-100"
+                                id="whatsappBtn"
+                            >
+                                <i
+                                    data-lucide="message-circle"
+                                    class="me-2"
+                                ></i>
+                                Comprar por WhatsApp
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal de búsqueda -->
-    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="searchModalLabel">Buscar productos</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar productos..." autocomplete="off">
+        <!-- Modal de búsqueda -->
+        <div
+            class="modal fade"
+            id="searchModal"
+            tabindex="-1"
+            aria-labelledby="searchModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="searchModalLabel">
+                            Buscar productos
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
                     </div>
-                    <div id="searchResults"></div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="searchInput"
+                                placeholder="Buscar productos..."
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div id="searchResults"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        lucide.createIcons();
-    </script>
-    <script src="script.js"></script>
-</body>
+        <!-- Botón flotante de WhatsApp -->
+        <a href="https://api.whatsapp.com/send?phone=5491123456789" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-whatsapp">
+                <path d="M17.4 14.5c-.1-.1-.6-.3-1.1-.8-.5-.5-.9-.8-1.1-.8-.3 0-.4.1-.6.3-.2.2-.8.8-.9 1-.1.1-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-1-.9-1.6-2.1-1.8-2.4-.2-.4 0-.6.1-.7.1-.2.3-.4.5-.6.2-.2.3-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.5-1.3-.8-1.8-.2-.2-.3-.3-.5-.4h-.5c-.4.1-.7.5-.9.7-.6.7-.9 1.5-.9 2.3 0 .7.3 1.8 1.7 3.6 2 2.8 3.8 3.6 4.4 3.9.7.2 1.6.3 2.1.2.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.2.1-1.3 0-.2-.2-.2-.4-.3z" />
+                <path d="M20.1 3.9C17.9 1.7 15 .5 12 .5 5.8.5.7 5.6.7 11.9c0 2 .5 3.9 1.5 5.6L.6 23.4l6-1.6c1.6.9 3.5 1.3 5.4 1.3 6.3 0 11.4-5.1 11.4-11.4-.1-2.8-1.2-5.7-3.3-7.8zM12 21.4c-1.7 0-3.3-.5-4.8-1.3l-.4-.2-3.5 1 1-3.4L4 17c-1-1.5-1.4-3.2-1.4-5.1 0-5.2 4.2-9.4 9.4-9.4 2.5 0 4.9 1 6.7 2.8 1.8 1.8 2.8 4.2 2.8 6.7-.1 5.2-4.3 9.4-9.5 9.4z" />
+            </svg>
+        </a>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script>
+            lucide.createIcons();
+        </script>
+        <script src="script.js"></script>
+    </body>
 </html>

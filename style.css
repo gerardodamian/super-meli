@@ -1,165 +1,480 @@
-/* ====== Reseteo básico ====== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
-  }
-  
-  /* ====== Estilos personalizados para catálogo ====== */
-  .producto-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
+/* ====== Modernización del estilo general ====== */
+:root {
+  /* Paleta con enfoque rojizo */
+  --color-primary: #9d3333;         /* Rojo oscuro para elementos principales */
+  --color-secondary: #fd625e;       /* Rojo-naranja para acentos (mantener) */
+  --color-accent: #e67e22;          /* Naranja para botones de acción */
+  --color-accent-hover: #d35400;    /* Naranja más oscuro para hover */
+  --color-warning: #f1c40f;         /* Amarillo para ofertas */
+  --color-background: #f0c0a8;      /* Fondo terracota claro */
+  --color-card: #ffffff;            /* Blanco para tarjetas */
+  --color-text-dark: #2d2d2d;       /* Texto oscuro */
+  --color-text-muted: #6d4c41;      /* Texto secundario en tono marrón */
+  --color-border: #e8d6cf;          /* Borde suave en tono rojizo */
+  --color-gradient-start: #e71c1c;  /* Inicio del gradiente (mantener) */
+  --color-gradient-end: #e4945e;    /* Fin del gradiente (mantener) */
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: var(--color-text-dark);
+  background-color: var(--color-background);
+}
+
+/* Asegúrate que main y container no tengan fondos que sobreescriban */
+main, .container {
+  background-color: transparent;
+}
+
+/* También asegúrate que la segunda definición de body coincida */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: #2d2d2d;
+  background-color: var(--color-background);
+}
+
+/* ====== Header con nuevo color ====== */
+header {
+  background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end)) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(60, 86, 165, 0.2) !important;
+}
+
+header h1 {
+  color: white !important;
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+
+/* Mejorar responsividad del header */
+@media (max-width: 767px) {
+  header .container > .row {
     flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    height: 100%;
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 0.5rem;
   }
   
-  .producto-titulo {
-    font-size: 1.1rem;
-    font-weight: 500;
-    height: 42px;
-    margin: 12px 16px 8px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-  
-  .precio-original {
-    text-decoration: line-through;
-    color: #6c757d;
-    font-size: 0.9rem;
-  }
-  
-  .precio-oferta {
-    color: #dc3545;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-  
-  .btn-agregar {
-    background-color: #0d6efd;
-    color: white;
-    font-weight: 500;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-  
-  .btn-agregar:hover {
-    background-color: #0b5ed7;
-  }
-  
-  .btn-ver-mas {
-    background-color: #e9ecef;
-    color: #495057;
-    font-weight: 500;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-  
-  .btn-ver-mas:hover {
-    background-color: #dee2e6;
-  }
-  
-  /* ====== Resultados de búsqueda ====== */
-  .search-result-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-bottom: 8px;
-    border: 1px solid #f1f1f1;
-  }
-  
-  .search-result-item:hover {
-    background: #f8f9fa;
-  }
-  
-  /* ====== Carrito vacío ====== */
-  .empty-cart {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
-    color: #6c757d;
+  header .col-md-6 {
+    width: 100%;
     text-align: center;
   }
   
-  .empty-cart i {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 16px;
-    color: #adb5bd;
+  header .d-flex.justify-content-md-end {
+    justify-content: center !important;
   }
   
-  .empty-cart p {
+  header h1 {
     font-size: 1.2rem;
-    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  header .row.align-items-center {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
   
-  .empty-cart span {
+  header img.me-3 {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  
+  header h1 {
+    font-size: 1.1rem;
+    max-width: 65%; /* Limita el ancho para que el texto se muestre en varias líneas */
+    white-space: normal;
+    hyphens: auto;
+  }
+  
+  header .btn {
+    padding: 0.4rem 0.7rem;
     font-size: 0.9rem;
   }
   
-  /* ====== Notificación de producto agregado ====== */
+  header .btn span {
+    display: none; /* Ocultar el texto en botones en pantallas muy pequeñas */
+  }
+  
+  header .btn i {
+    margin-right: 0 !important; /* Quitar margen del icono cuando no hay texto */
+  }
+}
+
+/* Botones del header */
+header .btn-outline-secondary {
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+header .btn-outline-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: white !important;
+}
+
+header .btn-outline-primary {
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+header .btn-outline-primary:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: white !important;
+}
+
+/* ====== Secciones ====== */
+section h2 {
+  color: var(--color-primary) !important;
+  border-color: var(--color-border) !important;
+  font-weight: 600;
+}
+
+/* ====== Ofertas ====== */
+.border-warning {
+  border-color: var(--color-warning) !important;
+}
+
+.bg-warning {
+  background-color: var(--color-warning) !important;
+}
+
+.text-danger {
+  color: var(--color-secondary) !important;
+}
+
+/* ====== Botones ====== */
+.btn-primary {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: white !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-hover) !important;
+  border-color: var(--color-accent-hover) !important;
+}
+
+.btn-success {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+}
+
+.btn-success:hover {
+  background-color: var(--color-accent-hover) !important;
+  border-color: var(--color-accent-hover) !important;
+}
+
+.btn-outline-danger {
+  color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--color-secondary) !important;
+  color: white !important;
+}
+
+/* ====== Cards ====== */
+.card {
+  border-color: var(--color-border);
+  box-shadow: 0 4px 12px rgba(231, 28, 28, 0.05); /* Sombra con tono rojizo */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(231, 28, 28, 0.1); /* Sombra con tono rojizo */
+}
+
+/* ====== Footer ====== */
+footer {
+  background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end)) !important;
+  color: white !important;
+}
+
+footer .text-muted {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+footer a {
+  color: white !important;
+}
+
+footer a:hover {
+  color: var(--color-warning) !important;
+}
+
+/* ====== Notificación de producto agregado ====== */
+.add-to-cart-notification {
+  background-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(1, 195, 157, 0.3);
+}
+
+/* ====== Confirmación de pedido ====== */
+.order-confirmation {
+  background: white;
+  border: 2px solid var(--color-accent);
+}
+
+.order-confirmation .text-success {
+  color: var(--color-accent) !important;
+}
+
+/* ====== Modernización del estilo general ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: #2d2d2d;
+  background-color: var(--color-background); /* Usar la variable aquí también */
+}
+
+/* ====== Header y título ====== */
+h1.header-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  white-space: normal;
+  word-break: break-word;
+}
+
+@media (max-width: 576px) {
+  h1.header-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* ====== Catálogo ====== */
+.producto-card {
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.producto-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  height: 42px;
+  margin: 12px 16px 8px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.precio-original {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.precio-oferta {
+  color: #e63946;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.btn-agregar {
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: white;
+  font-weight: 500;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-agregar:hover {
+  background: linear-gradient(to right, #43e97b, #38f9d7);
+}
+
+.btn-ver-mas {
+  background-color: #fff;
+  color: #6c757d;
+  font-weight: 500;
+  border: 1px solid #dee2e6;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-ver-mas:hover {
+  background-color: #f1f3f5;
+}
+
+/* ====== Búsqueda ====== */
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  background-color: #ffffff;
+}
+
+.search-result-item:hover {
+  background: #f9f9f9;
+}
+
+/* ====== Carrito vacío ====== */
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #adb5bd;
+  text-align: center;
+}
+
+.empty-cart i {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  color: #ced4da;
+}
+
+.empty-cart p {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.empty-cart span {
+  font-size: 0.9rem;
+}
+
+/* ====== Notificación de producto agregado ====== */
+.add-to-cart-notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: #00c896;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 200, 150, 0.2);
+  z-index: 9999;
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.add-to-cart-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-content i {
+  color: white;
+}
+
+/* ====== Formulario de contacto dentro del carrito ====== */
+#checkoutForm {
+  margin-top: 1rem;
+}
+
+#checkoutForm input[type="text"] {
+  border-radius: 6px;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+/* ====== Confirmación de pedido ====== */
+.order-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  z-index: 9999;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.order-confirmation.show {
+  opacity: 1;
+}
+
+.order-confirmation-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ====== Ajustes responsivos menores ====== */
+@media (max-width: 480px) {
   .add-to-cart-notification {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
-    z-index: 9999;
-    opacity: 0;
-    transition: transform 0.3s, opacity 0.3s;
+    width: 90%;
+    padding: 10px;
+    font-size: 0.9rem;
   }
-  
-  .add-to-cart-notification.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
+
+  .producto-titulo {
+    font-size: 1rem;
   }
-  
-  .notification-content {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+}
+
+/* ====== Botón flotante de WhatsApp ====== */
+.whatsapp-float {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: #FFF;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 30px;
+  box-shadow: 2px 2px 3px #999;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.whatsapp-float:hover {
+  background-color: #128c7e;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Hacer el botón más pequeño en dispositivos móviles */
+@media screen and (max-width: 767px) {
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 15px;
+    right: 15px;
+    font-size: 22px;
   }
-  
-  .notification-content i {
-    color: white;
-  }
-  
-  /* ====== Ajustes responsivos menores ====== */
-  @media (max-width: 480px) {
-    .add-to-cart-notification {
-      width: 90%;
-      padding: 10px;
-      font-size: 0.9rem;
-    }
-  
-    .producto-titulo {
-      font-size: 1rem;
-    }
-  }
-  
+}
