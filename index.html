@@ -3,7 +3,12 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Autoservicio Sagrado Corazón de Jesús</title>
+        <title>Autoservicio Sagrado Corazón de Jesús - Las Talas, Catamarca</title>
+        <meta name="description" content="Supermercado en Las Talas, Catamarca. Productos frescos, ofertas especiales, delivery, Pago Fácil y Mercado Pago. Abierto todos los días de 8:00 a 22:00. ¡Tu supermercado de confianza!">
+        <meta name="keywords" content="supermercado Las Talas, autoservicio Catamarca, productos frescos, delivery, pago fácil, mercado pago, ofertas especiales">
+        <meta name="robots" content="index, follow">
+        <meta name="author" content="Autoservicio Sagrado Corazón de Jesús">
+        <link rel="canonical" href="https://gerardodamian.github.io/super-meli/">
 
         <!-- Metadatos Open Graph -->
 <meta property="og:title" content="Supermercado Sagrado Corazón de Jesús" />
@@ -16,6 +21,10 @@
 <!-- Favicon -->
 <link rel="icon" href="multimedia/logo.png" type="image/png" />
 
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
         <!-- Bootstrap CSS -->
         <link
@@ -26,55 +35,127 @@
         <!-- CSS Personalizado -->
         <link rel="stylesheet" href="style.css" />
 
+        <!-- Structured Data para SEO Local -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Grocery",
+            "name": "Autoservicio Sagrado Corazón de Jesús",
+            "image": "https://gerardodamian.github.io/super-meli/multimedia/logo.png",
+            "description": "Supermercado en Las Talas, Catamarca. Productos frescos, ofertas especiales, delivery y servicios de Pago Fácil.",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Las Talas",
+                "addressRegion": "Catamarca",
+                "addressCountry": "AR"
+            },
+            "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": -28.439878,
+                "longitude": -67.120936
+            },
+            "telephone": "+54-9-351-718-1975",
+            "openingHours": "Mo-Su 08:00-22:00",
+            "paymentAccepted": ["Cash", "Credit Card", "Mercado Pago"],
+            "currenciesAccepted": "ARS",
+            "priceRange": "$$",
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "5",
+                "reviewCount": "2"
+            },
+            "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Productos y Ofertas",
+                "itemListElement": [
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Product",
+                            "name": "Productos Frescos"
+                        }
+                    }
+                ]
+            },
+            "offers": {
+                "@type": "Offer",
+                "availability": "https://schema.org/InStock",
+                "deliveryMethod": "https://schema.org/OnSitePickup"
+            },
+            "hasService": [
+                {
+                    "@type": "Service",
+                    "name": "Delivery",
+                    "description": "Servicio de entrega a domicilio"
+                },
+                {
+                    "@type": "Service", 
+                    "name": "Pago Fácil",
+                    "description": "Pago de facturas de servicios"
+                }
+            ]
+        }
+        </script>
+
         <!-- Iconos de Lucide -->
         <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     </head>
     <body>
         <!-- Header con Bootstrap -->
-        <header class="bg-white shadow-sm sticky-top">
+        <header class="modern-header sticky-top">
             <div class="container py-2">
                 <div class="row align-items-center">
-                    <div class="col-md-6 d-flex align-items-center justify-content-center justify-content-md-start">
-                        <img
-                            src="multimedia/logo.png"
-                            alt="Logo Autoservicio Sagrado Corazón"
-                            class="me-3 rounded-circle border"
-                            width="60"
-                            height="60"
-                            onerror="this.src='https://via.placeholder.com/60/f8f9fa/dc3545?text=SCJ'"
-                        />
-                        <h1 class="mb-0 text-wrap">Autoservicio Sagrado Corazón de Jesús</h1>
+                    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-start">
+                        <div class="logo-container">
+                            <img
+                                src="multimedia/logo.png"
+                                alt="Logo Autoservicio Sagrado Corazón"
+                                class="logo-image"
+                                onerror="this.src='https://via.placeholder.com/60/f8f9fa/dc3545?text=SCJ'"
+                            />
+                            <h1 class="brand-title">
+                                <span class="brand-title-full">Autoservicio Sagrado Corazón de Jesús</span>
+                                <span class="brand-title-medium">Sagrado Corazón de Jesús</span>
+                                <span class="brand-title-short">Sagrado Corazón de Jesús</span>
+                            </h1>
+                        </div>
                     </div>
-                    <div class="col-md-6 mt-2 mt-md-0">
-                        <div class="d-flex justify-content-center justify-content-md-end gap-2 gap-md-3">
+                    <div class="col-12 col-md-6 mt-2 mt-md-0" style="overflow: visible;">
+                        <div class="header-actions" style="overflow: visible; padding-right: 20px;">
                             <button
-                                class="btn btn-outline-secondary d-flex align-items-center"
+                                class="btn btn-modern btn-search d-flex align-items-center"
                                 id="searchBtn"
+                                title="Buscar productos"
                             >
-                                <i
-                                    data-lucide="search"
-                                    class="me-2"
-                                    width="18"
-                                    height="18"
-                                ></i>
-                                <span>Buscar</span>
+                                <i data-lucide="search" class="me-2" width="18" height="18"></i>
+                                <span class="d-none d-lg-inline">Buscar</span>
                             </button>
                             <button
-                                class="btn btn-outline-primary d-flex align-items-center position-relative"
-                                id="cartBtn"
+                                class="btn btn-modern btn-favorites d-flex align-items-center"
+                                id="favoritesBtn"
+                                title="Ver favoritos"
                             >
-                                <i
-                                    data-lucide="shopping-cart"
-                                    class="me-2"
-                                    width="18"
-                                    height="18"
-                                ></i>
-                                <span>Carrito</span>
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                    id="cartBadge"
-                                    >0</span
+                                <i data-lucide="heart" class="me-2" width="18" height="18"></i>
+                                <span class="d-none d-lg-inline">Favoritos</span>
+                                <span class="favorites-count" id="favoritesBadge">0</span>
+                            </button>
+                            <div style="position: relative; overflow: visible;">
+                                <button
+                                    class="btn btn-modern btn-cart d-flex align-items-center"
+                                    id="cartBtn"
+                                    title="Ver carrito"
                                 >
+                                    <i data-lucide="shopping-cart" class="me-2" width="18" height="18"></i>
+                                    <span class="d-none d-lg-inline">Carrito</span>
+                                    <span class="cart-count" id="cartBadge">0</span>
+                                </button>
+                            </div>
+                            <button
+                                class="theme-toggle"
+                                id="themeToggle"
+                                title="Cambiar tema"
+                            >
+                                <span class="theme-icon">☀️</span>
                             </button>
                         </div>
                     </div>
@@ -82,10 +163,123 @@
             </div>
         </header>
 
+        <!-- Banner Pago Fácil -->
+        <section class="pago-facil-banner">
+            <div class="container">
+                <div class="pago-facil-content">
+                    <div class="pago-facil-logo-container">
+                        <img src="https://play-lh.googleusercontent.com/NnQY_ar-Jg0AGo3dUW05jmlGBJqR6dxYkeHOQTFHLAtMD6GKPAPtWjrw3H9wkh3Dsmc" 
+                             alt="Pago Fácil" 
+                             class="pago-facil-logo"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="pago-facil-icon-fallback" style="display: none;">💳</div>
+                    </div>
+                    <div class="pago-facil-text">
+                        <h2 class="pago-facil-title">¡PAGÁ TODAS TUS FACTURAS CON PAGO FÁCIL!</h2>
+                        <p class="pago-facil-subtitle">Servicio disponible • Luz, Gas, Agua, Teléfono y más • Rápido y seguro</p>
+                        <div class="payment-methods">
+                            <div class="payment-method">
+                                <span class="payment-icon">💡</span>
+                                <span class="payment-text">Luz</span>
+                            </div>
+                            <div class="payment-method">
+                                <span class="payment-icon">🔥</span>
+                                <span class="payment-text">Gas</span>
+                            </div>
+                            <div class="payment-method">
+                                <span class="payment-icon">💧</span>
+                                <span class="payment-text">Agua</span>
+                            </div>
+                            <div class="payment-method">
+                                <span class="payment-icon">📱</span>
+                                <span class="payment-text">Teléfono</span>
+                            </div>
+                            <div class="payment-method">
+                                <span class="payment-icon">📺</span>
+                                <span class="payment-text">Cable</span>
+                            </div>
+                            <div class="payment-method">
+                                <span class="payment-icon">📡</span>
+                                <span class="payment-text">Internet</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pago-facil-badge">
+                        <span class="badge-text">NUEVO</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Contenido principal -->
         <main class="container py-4">
+            <!-- Carrusel de Ofertas -->
             <section class="mb-5">
-                <h2 class="text-danger border-bottom pb-2 mb-4">
+                <div class="offers-carousel-container">
+                    <div class="banner-header mb-4">
+                        <div class="banner-title-section">
+                            <h1 class="banner-main-title">
+                                <span class="title-fire">🔥</span>
+                                <span class="title-text">¡OFERTAS ESPECIALES!</span>
+                                <span class="title-fire">🔥</span>
+                            </h1>
+                            <p class="banner-subtitle">
+                                Los mejores precios en productos seleccionados • Aprovechá estas increíbles promociones
+                            </p>
+                        </div>
+                        <div class="carousel-controls">
+                            <button class="carousel-btn carousel-btn-prev" id="carouselPrev" title="Anterior">
+                                <i data-lucide="chevron-left" width="20" height="20"></i>
+                            </button>
+                            <button class="carousel-btn carousel-btn-next" id="carouselNext" title="Siguiente">
+                                <i data-lucide="chevron-right" width="20" height="20"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="offers-carousel-wrapper">
+                        <div class="offers-carousel" id="offersCarousel">
+                            <!-- Las ofertas se generan dinámicamente -->
+                        </div>
+                        <div class="carousel-auto-indicator" id="autoIndicator">
+                            <i data-lucide="play" width="12" height="12"></i>
+                            Auto
+                        </div>
+                    </div>
+                    
+                    <!-- Indicadores del carrusel -->
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        <!-- Los indicadores se generan dinámicamente -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filtros de categorías -->
+            <div class="category-filters" id="categoryFilters">
+                <button class="filter-btn active" data-category="todos">Todos</button>
+                <button class="filter-btn" data-category="Lácteos">Lácteos</button>
+                <button class="filter-btn" data-category="Panificados">Panificados</button>
+                <button class="filter-btn" data-category="Bebidas">Bebidas</button>
+                <button class="filter-btn" data-category="Despensa">Despensa</button>
+                <button class="filter-btn" data-category="Conservas">Conservas</button>
+                <button class="filter-btn" data-category="Aceites">Aceites</button>
+                <button class="filter-btn" data-category="Frescos">Frescos</button>
+            </div>
+
+            <!-- Selector de ordenamiento -->
+            <div class="sort-container">
+                <select class="sort-dropdown" id="sortSelect">
+                    <option value="default">Ordenar por...</option>
+                    <option value="name-asc">Nombre A-Z</option>
+                    <option value="name-desc">Nombre Z-A</option>
+                    <option value="price-asc">Precio menor a mayor</option>
+                    <option value="price-desc">Precio mayor a menor</option>
+                    <option value="category">Por categoría</option>
+                </select>
+            </div>
+
+            <section class="mb-5">
+                <h2 class="section-title text-danger border-bottom pb-2 mb-4">
                     🔥 Ofertas Especiales
                 </h2>
                 <div
@@ -97,7 +291,7 @@
             </section>
 
             <section class="mb-5">
-                <h2 class="border-bottom pb-2 mb-4">📦 Todos los productos</h2>
+                <h2 class="section-title border-bottom pb-2 mb-4">📦 Todos los productos</h2>
                 <div
                     class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4"
                     id="productosGrid"
@@ -106,98 +300,334 @@
                 </div>
             </section>
 
-            <section>
-                <h2 class="border-bottom pb-2 mb-4">📍 ¿Dónde estamos?</h2>
+            <!-- Sección Ubicación Moderna -->
+            <section class="location-section">
+                <div class="location-header">
+                    <h2 class="location-title"><i data-lucide="map-pin" width="60" height="60"></i> ¿Dónde Estamos?</h2>
+                    <p class="location-subtitle">
+                        Visitanos en nuestro local en el corazón de Las Talas • Fácil acceso y estacionamiento
+                    </p>
+                </div>
+                
                 <div class="row g-4">
+                    <!-- Información del Local -->
                     <div class="col-lg-6">
-                        <div class="card shadow-sm">
-                            <img
-                                src="multimedia/foto-frente.png"
-                                alt="Frente del local"
-                                class="card-img-top"
-                                style="height: 250px; object-fit: cover"
-                                onerror="this.src='https://via.placeholder.com/800x400/f8f9fa/6c757d?text=Frente+del+Local'"
-                            />
-                            <div class="card-body">
-                                <h3 class="h5 card-title">Nuestro Local</h3>
-                                <p class="card-text">
-                                    Te esperamos con los mejores productos y
-                                    precios.
+                        <div class="store-card">
+                            <div class="store-image-container">
+                                <img
+                                    src="multimedia/foto-frente.png"
+                                    alt="Frente del Autoservicio Sagrado Corazón de Jesús"
+                                    class="store-image"
+                                    onerror="this.src='https://via.placeholder.com/600x280/f8f9fa/6c757d?text=Frente+del+Local'"
+                                />
+                                <div class="store-badge"><i data-lucide="map-pin" width="20" height="20"></i> Nuestro Local</div>
+                            </div>
+                            
+                            <div class="store-details">
+                                <h3 class="store-title">Autoservicio Sagrado Corazón de Jesús</h3>
+                                <p class="store-description">
+                                    Tu supermercado de confianza en Las Talas. Productos frescos, 
+                                    atención personalizada y los mejores precios de la zona.
                                 </p>
-                                <div class="bg-light p-3 rounded">
-                                    <p>
-                                        <strong>Horarios:</strong> Lunes a
-                                        Domingo 8:00 - 22:00
-                                    </p>
-                                    <p>
-                                        <strong>Dirección:</strong> En el Corazón de Las Talas
-                                    </p>
+                                
+                                <div class="info-card">
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i data-lucide="clock" width="18" height="18"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">Horarios de Atención</div>
+                                            <p class="info-text">
+                                                Lunes a Domingo<br>
+                                                8:00 AM - 10:00 PM
+                                            </p>
+                                            <span class="hours-special">🌟 Abierto todos los días</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i data-lucide="map-pin" width="18" height="18"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">Ubicación</div>
+                                            <p class="info-text">En el Corazón de Las Talas<br>Catamarca, Argentina</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i data-lucide="phone" width="18" height="18"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">Contacto</div>
+                                            <p class="info-text">+54 9 351 718-1975</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-icon">
+                                            <i data-lucide="car" width="18" height="18"></i>
+                                        </div>
+                                        <div class="info-content">
+                                            <div class="info-label">Estacionamiento</div>
+                                            <p class="info-text">Gratuito y disponible</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Servicios Destacados -->
+                                <div class="services-grid">
+                                    <div class="service-badge">
+                                        <span class="service-icon">🚚</span>
+                                        <p class="service-title">Delivery</p>
+                                    </div>
+                                    <div class="service-badge">
+                                        <span class="service-icon">💳</span>
+                                        <p class="service-title">Pago Fácil</p>
+                                    </div>
+                                    <div class="service-badge">
+                                        <span class="service-icon">🛒</span>
+                                        <p class="service-title">Autoservicio</p>
+                                    </div>
+                                    <div class="service-badge">
+                                        <span class="service-icon">❄️</span>
+                                        <p class="service-title">Productos Frescos</p>
+                                    </div>
+                                </div>
+
+                                <!-- Estadísticas -->
+                                <div class="store-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">15+</span>
+                                        <div class="stat-label">Años de experiencia</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">500+</span>
+                                        <div class="stat-label">Productos</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">100%</span>
+                                        <div class="stat-label">Satisfacción</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Botones de Acción -->
+                                <div class="action-buttons">
+                                    <a href="https://maps.app.goo.gl/3VT4JNHphGt3KnDCA" 
+                                       target="_blank" class="action-btn action-btn-primary">
+                                        <i data-lucide="navigation" width="18" height="18"></i>
+                                        Cómo Llegar
+                                    </a>
+                                    <a href="https://api.whatsapp.com/send?phone=5493517181975&text=Hola! Quiero consultar horarios y ubicación" 
+                                       target="_blank" class="action-btn action-btn-secondary">
+                                        <i data-lucide="message-circle" width="18" height="18"></i>
+                                        Contactar
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Mapa Interactivo -->
                     <div class="col-lg-6">
-                        <div class="ratio ratio-4x3 h-100">
+                        <div class="map-container">
+                            <div class="map-overlay">
+                                <div class="map-overlay-title"><i data-lucide="map-pin" width="20" height="20"></i> Autoservicio Sagrado Corazón de Jesús</div>
+                                <p class="map-overlay-text">Tap para abrir en Maps</p>
+                            </div>
                             <iframe
-                                class="w-100 h-100 rounded"
+                                class="w-100 h-100"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d219.26977269138928!2d-67.12093574256392!3d-28.439878198990222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x942743925ffa3201%3A0x6d3bea966a23190d!2sAutoservicio%20Sagrado%20Corazon%20De%20Jesus!5e0!3m2!1ses!2sar!4v1749313488398!5m2!1ses!2sar"
                                 style="border: 0"
                                 allowfullscreen=""
                                 loading="lazy"
+                                title="Ubicación del Autoservicio Sagrado Corazón de Jesús"
                             >
                             </iframe>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información Adicional -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <p class="text-muted mb-0">
+                                <i data-lucide="info" width="16" height="16" class="me-1"></i>
+                                ¿Necesitas delivery? Consulta disponibilidad por WhatsApp • Aceptamos efectivo, tarjeta y Mercado Pago
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonios -->
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">
+                                "Excelente atención y productos siempre frescos. Es mi supermercado de confianza en Las Talas desde hace años."
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">MR</div>
+                                <div class="author-info">
+                                    <h6>María Rosa</h6>
+                                    <small>Cliente frecuente</small>
+                                </div>
+                                <div class="rating">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">
+                                "Muy buena ubicación y precios justos. El servicio de Pago Fácil es súper conveniente para el barrio."
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">JC</div>
+                                <div class="author-info">
+                                    <h6>Juan Carlos</h6>
+                                    <small>Vecino de Las Talas</small>
+                                </div>
+                                <div class="rating">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- Footer con Bootstrap -->
-        <footer class="bg-light py-4 mt-auto">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div
-                        class="col-md-6 mb-3 mb-md-0 d-flex align-items-center"
-                    >
-                        <img
-                            src="multimedia/logo.png"
-                            alt="Logo"
-                            width="50"
-                            height="50"
-                            class="me-2"
-                            onerror="this.src='https://via.placeholder.com/50/f8f9fa/dc3545?text=SCJ'"
-                        />
-                        <span class="text-muted"
-                            >© 2023 Autoservicio Sagrado Corazón de Jesús</span
-                        >
+        <!-- Footer Moderno -->
+        <footer class="modern-footer">
+            <div class="footer-content">
+                <div class="container">
+                    <div class="row">
+                        <!-- Información Principal -->
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="footer-section">
+                                <div class="footer-logo">
+                                    <img
+                                        src="multimedia/logo.png"
+                                        alt="Logo Autoservicio Sagrado Corazón"
+                                        class="footer-logo-img"
+                                        onerror="this.src='https://via.placeholder.com/60/f8f9fa/dc3545?text=SCJ'"
+                                    />
+                                    <h5 class="footer-brand">Autoservicio Sagrado Corazón de Jesús</h5>
+                                </div>
+                                <p class="footer-description">
+                                    Tu supermercado de confianza en Las Talas. Productos frescos, 
+                                    mejores precios y atención personalizada desde hace años.
+                                </p>
+                                <div class="footer-badges">
+                                    <span class="badge-item">🏪 Atención Personalizada</span>
+                                    <span class="badge-item">🚚 Delivery</span>
+                                    <span class="badge-item">
+                                        <img src="https://play-lh.googleusercontent.com/NnQY_ar-Jg0AGo3dUW05jmlGBJqR6dxYkeHOQTFHLAtMD6GKPAPtWjrw3H9wkh3Dsmc" alt="pago-facil">
+                                        Pago Fácil
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Información de Contacto -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="footer-section">
+                                <h6 class="footer-title">Contacto</h6>
+                                <div class="footer-contact">
+                                    <div class="contact-item">
+                                        <i data-lucide="map-pin" width="16" height="16"></i>
+                                        <span>En el Corazón de Las Talas</span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <i data-lucide="clock" width="16" height="16"></i>
+                                        <span>Lunes a Domingo<br>8:00 - 22:00</span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <i data-lucide="phone" width="16" height="16"></i>
+                                        <span>+54 9 351 718-1975</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Servicios -->
+                        <div class="col-lg-2 col-md-6 mb-4">
+                            <div class="footer-section">
+                                <h6 class="footer-title">Servicios</h6>
+                                <ul class="footer-links">
+                                    <li><a href="#productos">Productos Frescos</a></li>
+                                    <li><a href="#ofertas">Ofertas Especiales</a></li>
+                                    <li><a href="#delivery">Delivery</a></li>
+                                    <li><a href="#pagofacil">Pago de Facturas</a></li>
+                                    <li><a href="#mercadopago">Mercado Pago</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Redes Sociales y Newsletter -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="footer-section">
+                                <h6 class="footer-title">Seguinos</h6>
+                                <div class="social-links">
+                                    <a href="https://api.whatsapp.com/send?phone=5493517181975" target="_blank" class="social-link whatsapp">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17.4 14.5c-.1-.1-.6-.3-1.1-.8-.5-.5-.9-.8-1.1-.8-.3 0-.4.1-.6.3-.2.2-.8.8-.9 1-.1.1-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-1-.9-1.6-2.1-1.8-2.4-.2-.4 0-.6.1-.7.1-.2.3-.4.5-.6.2-.2.3-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.5-1.3-.8-1.8-.2-.2-.3-.3-.5-.4h-.5c-.4.1-.7.5-.9.7-.6.7-.9 1.5-.9 2.3 0 .7.3 1.8 1.7 3.6 2 2.8 3.8 3.6 4.4 3.9.7.2 1.6.3 2.1.2.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.2.1-1.3 0-.2-.2-.2-.4-.3z"/>
+                                            <path d="M20.1 3.9C17.9 1.7 15 .5 12 .5 5.8.5.7 5.6.7 11.9c0 2 .5 3.9 1.5 5.6L.6 23.4l6-1.6c1.6.9 3.5 1.3 5.4 1.3 6.3 0 11.4-5.1 11.4-11.4-.1-2.8-1.2-5.7-3.3-7.8zM12 21.4c-1.7 0-3.3-.5-4.8-1.3l-.4-.2-3.5 1 1-3.4L4 17c-1-1.5-1.4-3.2-1.4-5.1 0-5.2 4.2-9.4 9.4-9.4 2.5 0 4.9 1 6.7 2.8 1.8 1.8 2.8 4.2 2.8 6.7-.1 5.2-4.3 9.4-9.5 9.4z"/>
+                                        </svg>
+                                        <span>WhatsApp</span>
+                                    </a>
+                                    <a href="#" class="social-link facebook">
+                                        <i data-lucide="facebook" width="20" height="20"></i>
+                                        <span>Facebook</span>
+                                    </a>
+                                    <a href="#" class="social-link instagram">
+                                        <i data-lucide="instagram" width="20" height="20"></i>
+                                        <span>Instagram</span>
+                                    </a>
+                                </div>
+                                <div class="newsletter">
+                                    <h6 class="newsletter-title">Ofertas por WhatsApp</h6>
+                                    <p class="newsletter-desc">Recibí nuestras ofertas exclusivas</p>
+                                    <a href="https://api.whatsapp.com/send?phone=5493517181975&text=Hola! Me gustaría recibir ofertas por WhatsApp" 
+                                       target="_blank" class="newsletter-btn">
+                                        <i data-lucide="bell" width="16" height="16"></i>
+                                        Suscribirme
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <ul class="list-inline text-md-end mb-0">
-                            <li class="list-inline-item">
-                                <a href="#" class="text-decoration-none"
-                                    >Política de Privacidad</a
-                                >
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="#" class="text-decoration-none"
-                                    >Términos</a
-                                >
-                            </li>
-                            <li class="list-inline-item">
-                                <a
-                                    href="https://api.whatsapp.com/send?phone=5491123456789"
-                                    class="text-decoration-none"
-                                    target="_blank"
-                                >
-                                    <i
-                                        data-lucide="whatsapp"
-                                        width="18"
-                                        height="18"
-                                    ></i>
-                                    Contáctanos
-                                </a>
-                            </li>
-                        </ul>
+                </div>
+            </div>
+            
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="footer-legal">
+                                <span class="copyright">© 2025 Autoservicio Sagrado Corazón de Jesús. Todos los derechos reservados.</span>
+                                <div class="legal-links">
+                                    <a href="#">Política de Privacidad</a>
+                                    <a href="#">Términos y Condiciones</a>
+                                    <a href="#">Política de Cookies</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="footer-payments">
+                                <span class="payments-text">Aceptamos:</span>
+                                <div class="payment-methods">
+                                    <span class="payment-method">💵</span>
+                                    <span class="payment-method">💳</span>
+                                    <span class="payment-method"><img src="https://contactopuro.com/files/mercadopago-81090.png" alt="mercadp-pago"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -339,7 +769,176 @@
                                 autocomplete="off"
                             />
                         </div>
+                        
+                        <!-- Filtros de Búsqueda Avanzada -->
+                        <div class="search-filters mb-3">
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <select class="form-select form-select-sm" id="searchCategory">
+                                        <option value="">Todas las categorías</option>
+                                        <option value="Lácteos">Lácteos</option>
+                                        <option value="Panificados">Panificados</option>
+                                        <option value="Bebidas">Bebidas</option>
+                                        <option value="Despensa">Despensa</option>
+                                        <option value="Conservas">Conservas</option>
+                                        <option value="Aceites">Aceites</option>
+                                        <option value="Frescos">Frescos</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select form-select-sm" id="searchPriceRange">
+                                        <option value="">Cualquier precio</option>
+                                        <option value="0-500">Hasta $500</option>
+                                        <option value="500-1000">$500 - $1000</option>
+                                        <option value="1000-2000">$1000 - $2000</option>
+                                        <option value="2000+">Más de $2000</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="searchOnlyOffers" value="offers">
+                                        <label class="form-check-label" for="searchOnlyOffers">
+                                            Solo ofertas
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Historial de Búsquedas -->
+                        <div id="searchHistory" class="search-history mb-3" style="display: none;">
+                            <small class="text-muted">Búsquedas recientes:</small>
+                            <div id="searchHistoryItems" class="mt-1"></div>
+                        </div>
+                        
                         <div id="searchResults"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de favoritos -->
+        <div
+            class="modal fade"
+            id="favoritesModal"
+            tabindex="-1"
+            aria-labelledby="favoritesModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="favoritesModalLabel">
+                            <i data-lucide="heart" class="me-2"></i>
+                            Productos Favoritos
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="text-muted mb-0">
+                                <span id="favoritesCount">0</span> productos favoritos
+                            </p>
+                            <div class="btn-group" role="group">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary btn-sm"
+                                    id="exportFavoritesBtn"
+                                    title="Exportar favoritos"
+                                >
+                                    <i data-lucide="download" width="16" height="16"></i>
+                                    Exportar
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    id="clearFavoritesBtn"
+                                    title="Limpiar favoritos"
+                                >
+                                    <i data-lucide="trash-2" width="16" height="16"></i>
+                                    Limpiar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="emptyFavorites" class="text-center py-5">
+                            <i
+                                data-lucide="heart"
+                                width="48"
+                                height="48"
+                                class="text-muted mb-3"
+                            ></i>
+                            <p class="lead">No tienes productos favoritos</p>
+                            <span class="text-muted">
+                                Agrega productos a tus favoritos para verlos aquí
+                            </span>
+                        </div>
+                        
+                        <div id="favoritesItems" class="row"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de detalles de producto -->
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalLabel">Detalles del Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="product-modal-image-container">
+                                    <img id="productModalImage" src="" alt="" class="img-fluid rounded">
+                                    <button class="favorite-btn favorite-modal-btn" id="favoriteModalBtn">
+                                        <i data-lucide="heart" width="18" height="18"></i>
+                                    </button>
+                                    <div id="productModalOffer" class="offer-badge" style="display: none;">¡OFERTA!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="product-modal-details">
+                                    <h4 id="productModalTitle" class="mb-3"></h4>
+                                    <span id="productModalCategory" class="badge bg-secondary mb-3"></span>
+                                    <p id="productModalDescription" class="text-muted mb-4"></p>
+                                    
+                                    <div class="price-section mb-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span id="productModalPrice" class="price-badge fs-3"></span>
+                                            <span id="productModalOriginalPrice" class="text-decoration-line-through text-muted" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="quantity-section mb-4">
+                                        <label for="productQuantity" class="form-label fw-bold">Cantidad:</label>
+                                        <div class="input-group" style="max-width: 150px;">
+                                            <button class="btn btn-outline-secondary" type="button" id="decreaseQty">-</button>
+                                            <input type="number" class="form-control text-center" id="productQuantity" value="1" min="1" max="10">
+                                            <button class="btn btn-outline-secondary" type="button" id="increaseQty">+</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-add-cart btn-lg" id="addToCartModalBtn">
+                                            <i data-lucide="shopping-cart" class="me-2" width="20" height="20"></i>
+                                            Agregar al Carrito
+                                        </button>
+                                        <button class="btn btn-outline-success" id="buyNowBtn">
+                                            <i data-lucide="zap" class="me-2" width="18" height="18"></i>
+                                            Comprar Ahora
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -347,7 +946,7 @@
 
         <!-- Botón flotante de WhatsApp -->
         <a href="https://api.whatsapp.com/send?phone=5491123456789" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-whatsapp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="whatsapp-icon">
                 <path d="M17.4 14.5c-.1-.1-.6-.3-1.1-.8-.5-.5-.9-.8-1.1-.8-.3 0-.4.1-.6.3-.2.2-.8.8-.9 1-.1.1-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-1-.9-1.6-2.1-1.8-2.4-.2-.4 0-.6.1-.7.1-.2.3-.4.5-.6.2-.2.3-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.5-1.3-.8-1.8-.2-.2-.3-.3-.5-.4h-.5c-.4.1-.7.5-.9.7-.6.7-.9 1.5-.9 2.3 0 .7.3 1.8 1.7 3.6 2 2.8 3.8 3.6 4.4 3.9.7.2 1.6.3 2.1.2.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.2.1-1.3 0-.2-.2-.2-.4-.3z" />
                 <path d="M20.1 3.9C17.9 1.7 15 .5 12 .5 5.8.5.7 5.6.7 11.9c0 2 .5 3.9 1.5 5.6L.6 23.4l6-1.6c1.6.9 3.5 1.3 5.4 1.3 6.3 0 11.4-5.1 11.4-11.4-.1-2.8-1.2-5.7-3.3-7.8zM12 21.4c-1.7 0-3.3-.5-4.8-1.3l-.4-.2-3.5 1 1-3.4L4 17c-1-1.5-1.4-3.2-1.4-5.1 0-5.2 4.2-9.4 9.4-9.4 2.5 0 4.9 1 6.7 2.8 1.8 1.8 2.8 4.2 2.8 6.7-.1 5.2-4.3 9.4-9.5 9.4z" />
             </svg>

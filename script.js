@@ -2,6 +2,15 @@ class CatalogoApp {
     constructor() {
         this.searchTerm = "";
         this.carrito = [];
+        this.favoritos = this.loadFavoritos();
+        this.currentCategory = "todos";
+        this.currentSort = "default";
+        this.theme = localStorage.getItem('theme') || 'light';
+        
+        // Variables del carrusel
+        this.currentSlide = 0;
+        this.autoSlideInterval = null;
+        this.isAutoSliding = true;
 
         this.productos = [
             {
@@ -115,7 +124,7 @@ class CatalogoApp {
                 name: "Yogur Natural Danone",
                 category: "Lácteos",
                 price: 420,
-                image: "https://chedrauimx.vtexassets.com/arquivos/ids/49198560-1200-auto?v=638845940935630000&width=1200&height=auto&aspect=true",
+                image: "https://www.supermercadoseljamon.com/documents/10180/892067/17020012_G.jpg",
                 description:
                     "Yogur natural cremoso, fuente de calcio y probióticos. Sin conservantes artificiales.",
                 brand: "Danone",
@@ -190,11 +199,25 @@ class CatalogoApp {
                 category: "Lácteos",
                 price: 4713,
                 image: "https://jumboargentina.vtexassets.com/arquivos/ids/187654-1200-auto?v=636383491016000000&width=1200&height=auto&aspect=true",
+                offer: true,
                 description:
                     "Queso cremoso de textura suave y sabor delicado. Perfecto para sándwiches y tostadas.",
                 brand: "Sancor",
                 weight: "300g",
                 ingredients: ["Leche", "Sal", "Cuajo", "Fermentos lácticos"],
+            },
+            {
+                id: 16,
+                name: "Yerba Mate La Hoja",
+                category: "Despensa",
+                price: 2800,
+                image: "https://distribuidoragabiluc.com/wp-content/uploads/2022/07/Sin-titulo-1-76.jpg",
+                offer: true,
+                description:
+                    "Yerba mate La Hoja de primera calidad, con palo y suave al paladar. Ideal para mate tradicional.",
+                brand: "La Hoja",
+                weight: "1kg",
+                ingredients: ["Yerba mate elaborada con palo"],
             },
         ];
 
@@ -211,7 +234,7 @@ class CatalogoApp {
                 nombre: "Yerba",
                 precioOriginal: 2500,
                 precioOferta: 2000,
-                imagen: "https://via.placeholder.com/200x150/fff3cd/856404?text=Yerba+OFERTA",
+                imagen: "https://distribuidoragabiluc.com/wp-content/uploads/2022/07/Sin-titulo-1-76.jpg",
             },
             {
                 id: 103,
@@ -227,19 +250,238 @@ class CatalogoApp {
                 precioOferta: 2400,
                 imagen: "https://via.placeholder.com/200x150/fff3cd/856404?text=Queso+OFERTA",
             },
+            {
+                id: 105,
+                name: "Queso Cremoso Sancor",
+                category: "Lácteos",
+                price: 4713,
+                image: "https://jumboargentina.vtexassets.com/arquivos/ids/187654-1200-auto?v=636383491016000000&width=1200&height=auto&aspect=true",
+                description:
+                    "Queso cremoso de textura suave y sabor delicado. Perfecto para sándwiches y tostadas.",
+                brand: "Sancor",
+                weight: "300g",
+                ingredients: ["Leche", "Sal", "Cuajo", "Fermentos lácticos"],
+            },
         ];
 
         this.init();
     }
 
     init() {
-        this.renderProductos();
-        this.renderOfertas();
+        // NO inicializar tema inmediatamente, esperar al DOM
         this.setupEventListeners();
-        this.cargarDatosCliente();
+        this.initCarousel();
+        this.renderOfertas();
+        this.renderProductos();
+        this.loadCartFromStorage();
+        this.updateCartCount();
+        this.initAnimations();
+        
+        // Solo una llamada a initTheme después de que todo esté listo
+        setTimeout(() => {
+            this.initTheme();
+        }, 300);
+    }
+
+    initTheme(attempts = 0) {
+        const maxAttempts = 5; // Reducir a 5 intentos
+        
+        // Verificar que el DOM esté completamente listo
+        if (document.readyState === 'loading') {
+            // Si el DOM aún se está cargando, esperar
+            setTimeout(() => this.initTheme(attempts), 100);
+            return;
+        }
+        
+        // Buscar elementos del tema
+        const themeButton = document.getElementById('themeToggle');
+        const themeIcon = document.querySelector('#themeToggle .theme-icon');
+        
+        if (!themeButton) {
+            if (attempts < maxAttempts) {
+                console.warn(`Botón de tema no encontrado, reintentando... (intento ${attempts + 1}/${maxAttempts})`);
+                setTimeout(() => this.initTheme(attempts + 1), 200);
+            } else {
+                console.error('No se pudo encontrar el botón de tema después de múltiples intentos');
+            }
+            return;
+        }
+
+        // Aplicar el tema al documento
+        document.documentElement.setAttribute('data-theme', this.theme);
+        
+        if (themeIcon && themeButton) {
+            // Cambiar el icono basado en el tema actual
+            const iconText = this.theme === 'dark' ? '🌙' : '☀️';
+            themeIcon.textContent = iconText;
+            
+            // Actualizar el título del botón
+            themeButton.setAttribute('title', 
+                this.theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'
+            );
+            
+            console.log(`Tema ${this.theme} aplicado correctamente con icono ${iconText}`);
+        } else {
+            if (attempts < maxAttempts) {
+                console.warn(`Icono del tema no encontrado, reintentando... (intento ${attempts + 1}/${maxAttempts})`);
+                setTimeout(() => this.initTheme(attempts + 1), 200);
+            } else {
+                console.error('No se pudieron encontrar los elementos del tema después de múltiples intentos');
+                // Crear el icono si no existe
+                if (themeButton && !themeIcon) {
+                    const newIcon = document.createElement('span');
+                    newIcon.className = 'theme-icon';
+                    newIcon.textContent = this.theme === 'dark' ? '🌙' : '☀️';
+                    themeButton.innerHTML = '';
+                    themeButton.appendChild(newIcon);
+                    
+                    themeButton.setAttribute('title', 
+                        this.theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'
+                    );
+                    
+                    console.log('Icono de tema creado dinámicamente');
+                }
+            }
+        }
+    }
+
+    toggleTheme() {
+        const themeButton = document.getElementById('themeToggle');
+        
+        // Agregar animación de cambio
+        if (themeButton) {
+            themeButton.classList.add('changing');
+            setTimeout(() => {
+                themeButton.classList.remove('changing');
+            }, 600);
+        }
+        
+        this.theme = this.theme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', this.theme);
+        
+        // Pequeño delay para que la animación se vea mejor
+        setTimeout(() => {
+            this.initTheme();
+        }, 100);
+        
+        this.showToast(
+            'Tema cambiado', 
+            `Modo ${this.theme === 'dark' ? 'oscuro 🌙' : 'claro ☀️'} activado`
+        );
+    }
+
+    loadFavoritos() {
+        return JSON.parse(localStorage.getItem('favoritos')) || [];
+    }
+
+    saveFavoritos() {
+        localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
+    }
+
+    toggleFavorito(productId) {
+        const index = this.favoritos.indexOf(productId);
+        if (index > -1) {
+            this.favoritos.splice(index, 1);
+            this.showToast('Eliminado de favoritos', 'Producto removido de tu lista de favoritos');
+        } else {
+            this.favoritos.push(productId);
+            this.showToast('Agregado a favoritos', 'Producto añadido a tu lista de favoritos');
+        }
+        this.saveFavoritos();
+        this.updateFavoritesBadge();
+        this.renderOfertas();
+        this.renderProductos();
+        this.updateFavoritesModalIfOpen();
+        this.renderCarousel(); // Actualizar también el carrusel
+    }
+
+    showToast(title, message, type = 'success') {
+        // Create toast container if it doesn't exist
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+
+        // Create toast
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-modern show';
+        toast.innerHTML = `
+            <div class="toast-header">
+                <i data-lucide="${type === 'success' ? 'check' : 'info'}" width="16" height="16"></i>
+                <strong class="me-auto ms-2">${title}</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+        lucide.createIcons();
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    loadCartFromStorage() {
+        const savedCart = localStorage.getItem('carrito');
+        if (savedCart) {
+            this.carrito = JSON.parse(savedCart);
+            this.updateCartBadge();
+        }
+        // También inicializar el badge de favoritos
+        this.updateFavoritesBadge();
+    }
+
+    saveCartToStorage() {
+        localStorage.setItem('carrito', JSON.stringify(this.carrito));
+    }
+
+    closeSearchModal() {
+        const searchModal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
+        if (searchModal) {
+            searchModal.hide();
+        }
     }
 
     setupEventListeners() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+
+        // Category filters
+        const categoryFilters = document.querySelectorAll('.filter-btn');
+        categoryFilters.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all buttons
+                categoryFilters.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                e.target.classList.add('active');
+                
+                this.currentCategory = e.target.dataset.category;
+                this.filterAndRenderProducts();
+            });
+        });
+
+        // Sort dropdown
+        const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                this.currentSort = e.target.value;
+                this.filterAndRenderProducts();
+            });
+        }
+
         // Botón de búsqueda
         const clearBtn = document.getElementById("clearDataBtn");
         if (clearBtn) {
@@ -277,6 +519,22 @@ class CatalogoApp {
             });
         }
 
+        // Botón de favoritos
+        const favoritesBtn = document.getElementById("favoritesBtn");
+        if (favoritesBtn) {
+            // Remover cualquier event listener previo
+            favoritesBtn.removeEventListener("click", this.favoritesClickHandler);
+            
+            // Crear el handler como una función bound
+            this.favoritesClickHandler = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.openFavoritesModal();
+            };
+            
+            favoritesBtn.addEventListener("click", this.favoritesClickHandler);
+        }
+
         // Búsqueda en tiempo real
         const searchInput = document.getElementById("searchInput");
         if (searchInput) {
@@ -285,6 +543,48 @@ class CatalogoApp {
                 this.renderSearchResults();
             });
         }
+
+        // Event listener para el modal de producto
+        const productModal = document.getElementById("productModal");
+        if (productModal) {
+            productModal.addEventListener('hidden.bs.modal', () => {
+                // Recrear iconos cuando se cierre el modal
+                lucide.createIcons();
+            });
+        }
+
+        // Event listeners del carrusel
+        const carouselPrev = document.getElementById('carouselPrev');
+        const carouselNext = document.getElementById('carouselNext');
+        const autoIndicator = document.getElementById('autoIndicator');
+        
+        if (carouselPrev) {
+            carouselPrev.addEventListener('click', () => this.prevSlide());
+        }
+        
+        if (carouselNext) {
+            carouselNext.addEventListener('click', () => this.nextSlide());
+        }
+
+        if (autoIndicator) {
+            autoIndicator.addEventListener('click', () => this.toggleAutoSlide());
+        }
+
+        // Event listener para mostrar/ocultar información de Mercado Pago
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'metodoPago') {
+                const mercadoPagoInfo = document.getElementById('mercadoPagoInfo');
+                const mercadoPagoPayButton = document.getElementById('mercadoPagoPayButton');
+                
+                if (e.target.value === 'mercadopago') {
+                    if (mercadoPagoInfo) mercadoPagoInfo.style.display = 'block';
+                    if (mercadoPagoPayButton) mercadoPagoPayButton.style.display = 'block';
+                } else {
+                    if (mercadoPagoInfo) mercadoPagoInfo.style.display = 'none';
+                    if (mercadoPagoPayButton) mercadoPagoPayButton.style.display = 'none';
+                }
+            }
+        });
 
         // No necesitamos más event listeners para cerrar modales
         // Bootstrap maneja eso automáticamente con data-bs-dismiss="modal"
@@ -401,56 +701,72 @@ class CatalogoApp {
         );
     }
 
-    // Renderizado de ofertas con Bootstrap
+    // Renderizado de productos moderno
+    renderProducts() {
+        // Show loading skeletons first
+        this.showLoadingSkeletons();
+        
+        // Simulate loading delay for better UX
+        setTimeout(() => {
+            const filteredProducts = this.getFilteredAndSortedProducts();
+            const ofertasGrid = document.getElementById("ofertasGrid");
+            const productosGrid = document.getElementById("productosGrid");
+
+            if (ofertasGrid && productosGrid) {
+                // Render offers
+                const ofertas = filteredProducts.filter(producto => producto.offer);
+                ofertasGrid.innerHTML = ofertas.map(producto => this.renderProductCard(producto)).join("");
+
+                // Render all products
+                productosGrid.innerHTML = filteredProducts.map(producto => this.renderProductCard(producto)).join("");
+
+                // Recreate icons
+                lucide.createIcons();
+                
+                // Initialize animations
+                this.initAnimations();
+            }
+        }, 300);
+    }
+
+    // ====== MÉTODO DE FILTRADO Y RENDERIZADO ======
+    filterAndRenderProducts() {
+        // Show loading skeletons first
+        this.showLoadingSkeletons();
+        
+        // Simulate loading delay for better UX
+        setTimeout(() => {
+            const filteredProducts = this.getFilteredAndSortedProducts();
+            const ofertasGrid = document.getElementById("ofertasGrid");
+            const productosGrid = document.getElementById("productosGrid");
+
+            if (ofertasGrid && productosGrid) {
+                // Render offers
+                const ofertas = filteredProducts.filter(producto => producto.offer);
+                ofertasGrid.innerHTML = ofertas.map(producto => this.renderProductCard(producto)).join("");
+
+                // Render all products
+                productosGrid.innerHTML = filteredProducts.map(producto => this.renderProductCard(producto)).join("");
+
+                // Recreate icons
+                lucide.createIcons();
+                
+                // Initialize animations
+                this.initAnimations();
+            }
+        }, 300);
+    }
+
     renderOfertas() {
         const grid = document.getElementById("ofertasGrid");
+        if (!grid) return;
 
-        // Filtrar productos que están en oferta
-        const productosEnOferta = this.productos.filter(
-            (producto) => producto.offer
-        );
+        // Usar productos filtrados en lugar de todos los productos
+        const filteredProducts = this.getFilteredAndSortedProducts();
+        const productosEnOferta = filteredProducts.filter(producto => producto.offer);
 
         grid.innerHTML = productosEnOferta
-            .map(
-                (producto) => `
-        <div class="col">
-            <div class="card h-100 border-warning position-relative">
-                <div class="position-absolute top-0 end-0 bg-warning text-dark p-2 m-2 rounded-pill fs-6">Oferta</div>
-                <div class="card-img-container bg-light p-3" style="height: 200px;">
-                    <img src="${producto.image}" alt="${producto.name}" 
-                        class="card-img-top h-100 object-fit-contain" 
-                        onerror="app.handleImageError(this)"/>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title producto-titulo">${producto.name}</h5>
-                    <div class="my-2">
-                        <p class="text-decoration-line-through text-muted mb-1">$${
-                            producto.price + Math.round(producto.price * 0.2)
-                        }</p>
-                        <p class="fw-bold text-danger fs-5 mb-2">$${
-                            producto.price
-                        }</p>
-                    </div>
-                    <div class="card-buttons mt-auto">
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-primary flex-grow-1" onclick="app.agregarAlCarrito(${JSON.stringify(
-                                producto
-                            ).replace(/"/g, "&quot;")})">
-                                <i data-lucide="shopping-cart" class="me-1" width="18" height="18"></i>
-                                Agregar
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="app.abrirModalProducto(${
-                                producto.id
-                            })">
-                                <i data-lucide="info" width="18" height="18"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `
-            )
+            .map(producto => this.renderProductCard(producto))
             .join("");
 
         // Reinicializar iconos después de actualizar el DOM
@@ -459,60 +775,15 @@ class CatalogoApp {
         }
     }
 
-    // Renderizado de productos con Bootstrap
     renderProductos() {
         const grid = document.getElementById("productosGrid");
-
-        grid.innerHTML = this.productos
-            .map(
-                (producto) => `
-        <div class="col">
-            <div class="card h-100 ${producto.offer ? "border-warning" : ""}">
-                ${
-                    producto.offer
-                        ? '<div class="position-absolute top-0 end-0 bg-warning text-dark p-2 m-2 rounded-pill fs-6">Oferta</div>'
-                        : ""
-                }
-                <div class="card-img-container bg-light p-3" style="height: 200px;">
-                    <img src="${producto.image}" alt="${producto.name}" 
-                        class="card-img-top h-100 object-fit-contain" 
-                        onerror="app.handleImageError(this)"/>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title producto-titulo">${producto.name}</h5>
-                    <div class="my-2">
-                        ${
-                            producto.offer
-                                ? `<p class="text-decoration-line-through text-muted mb-1">$${
-                                      producto.price +
-                                      Math.round(producto.price * 0.2)
-                                  }</p>
-                               <p class="fw-bold text-danger fs-5 mb-2">$${
-                                   producto.price
-                               }</p>`
-                                : `<p class="fw-bold fs-5 mb-2">$${producto.price}</p>`
-                        }
-                    </div>
-                    <div class="card-buttons mt-auto">
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-primary flex-grow-1" onclick="app.agregarAlCarrito(${JSON.stringify(
-                                producto
-                            ).replace(/"/g, "&quot;")})">
-                                <i data-lucide="shopping-cart" class="me-1" width="18" height="18"></i>
-                                Agregar
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="app.abrirModalProducto(${
-                                producto.id
-                            })">
-                                <i data-lucide="info" width="18" height="18"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `
-            )
+        if (!grid) return;
+        
+        // Usar productos filtrados en lugar de todos los productos
+        const filteredProducts = this.getFilteredAndSortedProducts();
+        
+        grid.innerHTML = filteredProducts
+            .map(producto => this.renderProductCard(producto))
             .join("");
 
         // Reinicializar iconos después de actualizar el DOM
@@ -521,8 +792,143 @@ class CatalogoApp {
         }
     }
 
-    // Gestión del carrito
+    getFilteredAndSortedProducts() {
+        let filteredProducts = this.productos;
+
+        // Filter by category
+        if (this.currentCategory !== 'todos') {
+            filteredProducts = filteredProducts.filter(producto => 
+                producto.category === this.currentCategory
+            );
+        }
+
+        // Filter by search term
+        if (this.searchTerm) {
+            filteredProducts = filteredProducts.filter(producto =>
+                producto.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                producto.category.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                (producto.brand && producto.brand.toLowerCase().includes(this.searchTerm.toLowerCase()))
+            );
+        }
+
+        // Sort products
+        switch (this.currentSort) {
+            case 'name-asc':
+                filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'name-desc':
+                filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+            case 'price-asc':
+                filteredProducts.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-desc':
+                filteredProducts.sort((a, b) => b.price - a.price);
+                break;
+            case 'category':
+                filteredProducts.sort((a, b) => a.category.localeCompare(b.category));
+                break;
+        }
+
+        return filteredProducts;
+    }
+
+    renderProductCard(producto) {
+        const isFavorite = this.favoritos.includes(producto.id);
+        
+        return `
+            <div class="col">
+                <div class="card product-card h-100">
+                    <div class="product-image-container">
+                        <img src="${producto.image}" class="card-img-top product-image" alt="${producto.name}" 
+                             onerror="this.src='https://via.placeholder.com/300x200/f8f9fa/6c757d?text=${encodeURIComponent(producto.name)}'">
+                        
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="app.toggleFavorito(${producto.id})" title="Agregar a favoritos">
+                            <i data-lucide="${isFavorite ? 'heart' : 'heart'}" width="18" height="18" ${isFavorite ? 'fill="currentColor"' : ''}></i>
+                        </button>
+                        
+                        ${producto.offer ? '<div class="offer-badge">¡Oferta!</div>' : ''}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="product-title">${producto.name}</h5>
+                        <p class="product-category">${producto.category}</p>
+                        <p class="product-description">${producto.description}</p>
+                        
+                        <div class="price-section">
+                            <div class="price-badge mb-3">$${producto.price.toLocaleString()}</div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="app.showProductModal(${producto.id})">
+                                    <i data-lucide="eye" width="16" height="16" class="me-2"></i>
+                                    Ver Producto
+                                </button>
+                                <button class="btn btn-add-cart" onclick="app.addToCart(${producto.id})">
+                                    <i data-lucide="shopping-cart" width="16" height="16" class="me-2"></i>
+                                    Agregar al carrito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    showLoadingSkeletons() {
+        const skeletonCard = `
+            <div class="col">
+                <div class="card product-card h-100">
+                    <div class="skeleton skeleton-card"></div>
+                </div>
+            </div>
+        `;
+        
+        const ofertasGrid = document.getElementById("ofertasGrid");
+        const productosGrid = document.getElementById("productosGrid");
+        
+        if (ofertasGrid) {
+            ofertasGrid.innerHTML = Array(4).fill(skeletonCard).join("");
+        }
+        
+        if (productosGrid) {
+            productosGrid.innerHTML = Array(8).fill(skeletonCard).join("");
+        }
+    }
+
+    initAnimations() {
+        // Add animation classes to elements as they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        });
+
+        // Observe product cards
+        document.querySelectorAll('.product-card').forEach(card => {
+            observer.observe(card);
+        });
+    }
+
+    // Gestión del carrito moderno
+    addToCart(productId) {
+        const producto = this.productos.find(p => p.id === productId);
+        if (producto) {
+            this.agregarAlCarrito(producto);
+        }
+    }
+
+    // Método original mantenido para compatibilidad
     agregarAlCarrito(producto) {
+        // Si recibimos solo un ID, buscar el producto
+        if (typeof producto === 'number') {
+            producto = this.productos.find(p => p.id === producto);
+            if (!producto) {
+                console.error("Producto no encontrado con ID:", producto);
+                return;
+            }
+        }
+
         // Verificar si el producto es válido
         if (!producto || (!producto.id && !producto.nombre && !producto.name)) {
             console.error("Producto inválido", producto);
@@ -567,6 +973,7 @@ class CatalogoApp {
         }
 
         this.updateCartBadge();
+        this.updateFavoritesModalIfOpen();
     }
 
     agregarAlCarritoDesdeModal(producto) {
@@ -597,12 +1004,60 @@ class CatalogoApp {
 
     updateCartBadge() {
         const badge = document.getElementById("cartBadge");
+        if (!badge) {
+            console.error('❌ No se encontró el elemento cartBadge');
+            return;
+        }
+        
         const totalItems = this.carrito.reduce(
             (total, item) => total + item.cantidad,
             0
         );
+        
         badge.textContent = totalItems;
-        badge.style.display = totalItems > 0 ? "flex" : "none";
+        
+        if (totalItems > 0) {
+            badge.style.display = "flex";
+            badge.style.visibility = "visible";
+            // Agregar animación de pulso
+            badge.classList.add('updated');
+            setTimeout(() => {
+                badge.classList.remove('updated');
+            }, 600);
+        } else {
+            badge.style.display = "none";
+            badge.style.visibility = "hidden";
+        }
+    }
+
+    updateFavoritesBadge() {
+        const badge = document.getElementById("favoritesBadge");
+        if (!badge) {
+            console.error('❌ No se encontró el elemento favoritesBadge');
+            return;
+        }
+        
+        const totalFavorites = this.favoritos.length;
+        
+        badge.textContent = totalFavorites;
+        
+        if (totalFavorites > 0) {
+            badge.style.display = "flex";
+            badge.style.visibility = "visible";
+            // Agregar animación de pulso
+            badge.classList.add('updated');
+            setTimeout(() => {
+                badge.classList.remove('updated');
+            }, 600);
+        } else {
+            badge.style.display = "none";
+            badge.style.visibility = "hidden";
+        }
+    }
+
+    // Alias para compatibilidad
+    updateCartCount() {
+        this.updateCartBadge();
     }
 
     // Actualizar la función renderCartModal para cambiar el texto del botón
@@ -612,7 +1067,7 @@ class CatalogoApp {
         const cartFooter = document.getElementById("cartFooter");
         const totalAmount = document.getElementById("totalAmount");
         const whatsappBtn = document.getElementById("whatsappBtn");
-        
+
         // Verificar que todos los elementos existen
         if (!emptyCart || !cartItems || !cartFooter || !totalAmount || !whatsappBtn) {
             console.error("Elementos del carrito no encontrados en el DOM");
@@ -708,6 +1163,57 @@ class CatalogoApp {
                     </div>
                 </div>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Método de pago</label>
+                <div class="payment-options">
+                    <div class="form-check payment-check">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="radioEfectivo" value="efectivo" checked>
+                        <label class="form-check-label payment-label" for="radioEfectivo">
+                            <span class="payment-icon">💵</span>
+                            <span class="payment-text">
+                                <strong>Efectivo</strong>
+                                <small class="text-muted d-block">Pago al recibir</small>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="form-check payment-check">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="radioTarjeta" value="tarjeta">
+                        <label class="form-check-label payment-label" for="radioTarjeta">
+                            <span class="payment-icon">💳</span>
+                            <span class="payment-text">
+                                <strong>Tarjeta</strong>
+                                <small class="text-muted d-block">Crédito/Débito en local</small>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="form-check payment-check">
+                        <input class="form-check-input" type="radio" name="metodoPago" id="radioMercadoPago" value="mercadopago">
+                        <label class="form-check-label payment-label" for="radioMercadoPago">
+                            <span class="payment-icon mp-icon">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS48aJbIfTmWFQpJRKmAyKIwdrWrq8H1MVf1g&s" 
+                                     alt="Mercado Pago" 
+                                     class="mp-logo"
+                                     onerror="this.src='https://http2.mlstatic.com/frontend-assets/ui-navigation/5.18.9/mercadolibre/logo__large_plus.png'">
+                            </span>
+                            <span class="payment-text">
+                                <strong>Mercado Pago</strong>
+                                <small class="text-muted d-block">Pago online seguro</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div id="mercadoPagoInfo" class="mt-3" style="display: none;">
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <i data-lucide="info" width="20" height="20" class="me-2"></i>
+                            <div>
+                                <strong>Pago con Mercado Pago</strong>
+                                <p class="mb-0 small">Te enviaremos un link de pago seguro por WhatsApp para que completes tu compra online.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="d-flex justify-content-end align-items-center mb-3">
                 <span class="me-2 fw-bold">Total:</span>
                 <span class="fs-4 fw-bold" id="totalAmount">$${total}</span>
@@ -715,8 +1221,15 @@ class CatalogoApp {
             <div class="d-flex flex-column gap-2 mt-3">
                 <button type="button" class="btn btn-success w-100" id="whatsappBtn" onclick="window.open(app.generarMensajeWhatsApp(), '_blank')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle me-2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                    Comprar por WhatsApp
+                    Enviar pedido por WhatsApp
                 </button>
+                <div id="mercadoPagoPayButton" style="display: none;">
+                    <button type="button" class="btn btn-primary w-100" onclick="app.abrirMercadoPago()">
+                        <span class="me-2">💙</span>
+                        Pagar con Mercado Pago
+                    </button>
+                    <small class="text-muted text-center d-block mt-2">O envía el pedido por WhatsApp para recibir el link de pago</small>
+                </div>
                 <button type="button" class="btn btn-outline-secondary" id="clearDataBtn" onclick="app.borrarDatosGuardados()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eraser me-2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
                     Borrar datos guardados
@@ -736,7 +1249,7 @@ class CatalogoApp {
             this.carrito = [];
             this.updateCartBadge();
             this.renderCartModal();
-            
+
             // Mostrar notificación
             this.showAddToCartNotification('Carrito vaciado correctamente');
         }
@@ -746,14 +1259,23 @@ class CatalogoApp {
     borrarDatosGuardados() {
         localStorage.removeItem("cliente_nombre");
         localStorage.removeItem("cliente_direccion");
-        
+        localStorage.removeItem("cliente_pago");
+
         // Limpiar los campos del formulario
         const nombreInput = document.getElementById("inputNombre");
         const direccionInput = document.getElementById("inputDireccion");
-        
+        const efectivoInput = document.getElementById("radioEfectivo");
+
         if (nombreInput) nombreInput.value = "";
         if (direccionInput) direccionInput.value = "";
+        if (efectivoInput) efectivoInput.checked = true; // Volver al default
         
+        // Ocultar info de Mercado Pago si está visible
+        const mercadoPagoInfo = document.getElementById("mercadoPagoInfo");
+        const mercadoPagoPayButton = document.getElementById("mercadoPagoPayButton");
+        if (mercadoPagoInfo) mercadoPagoInfo.style.display = "none";
+        if (mercadoPagoPayButton) mercadoPagoPayButton.style.display = "none";
+
         // Mostrar notificación
         this.showAddToCartNotification('Datos guardados eliminados');
     }
@@ -776,14 +1298,18 @@ class CatalogoApp {
         const metodoEntrega = document.querySelector(
             "input[name='metodoEntrega']:checked"
         );
+        const metodoPago = document.querySelector(
+            "input[name='metodoPago']:checked"
+        );
 
         const nombre = nombreInput ? nombreInput.value.trim() : "";
         const direccion = direccionInput ? direccionInput.value.trim() : "";
         const entrega = metodoEntrega ? metodoEntrega.value : "";
+        const pago = metodoPago ? metodoPago.value : "";
 
-        if (!nombre || !direccion || !entrega) {
+        if (!nombre || !direccion || !entrega || !pago) {
             alert(
-                "Por favor completá tu nombre, dirección y seleccioná si es delivery o retiro en el local."
+                "Por favor completá todos los campos: nombre, dirección, método de entrega y método de pago."
             );
             return "#";
         }
@@ -791,6 +1317,7 @@ class CatalogoApp {
         localStorage.setItem("cliente_nombre", nombre);
         localStorage.setItem("cliente_direccion", direccion);
         localStorage.setItem("cliente_entrega", entrega);
+        localStorage.setItem("cliente_pago", pago);
 
         const mensaje = encodeURIComponent(
             `¡Hola! Quiero realizar el siguiente pedido en Autoservicio Sagrado Corazón de Jesús:\n\n` +
@@ -813,7 +1340,18 @@ class CatalogoApp {
                     entrega === "delivery"
                         ? "🚚 Delivery a domicilio"
                         : "🛍️ Retiro en el local"
+                }\n` +
+                `• Método de pago: ${
+                    pago === "efectivo"
+                        ? "💵 Efectivo"
+                        : pago === "tarjeta"
+                        ? "💳 Tarjeta de crédito/débito"
+                        : "💙 Mercado Pago (link de pago online)"
                 }\n\n` +
+                (pago === "mercadopago" 
+                    ? `🔗 *Link de pago de Mercado Pago:*\n${this.generarLinkMercadoPago()}\n\n`
+                    : ""
+                ) +
                 `¡Gracias!`
         );
 
@@ -822,7 +1360,7 @@ class CatalogoApp {
 
         // Mostrar mensaje de confirmación
         this.showOrderConfirmation();
-        
+
         // Abrir WhatsApp y vaciar carrito, cerrar modal
         setTimeout(() => {
             this.carrito = [];
@@ -837,6 +1375,96 @@ class CatalogoApp {
         return url;
     }
 
+    // Función para generar link de pago de Mercado Pago
+    generarLinkMercadoPago() {
+        const total = this.calcularTotal();
+        const descripcion = `Autoservicio Sagrado Corazón de Jesús`;
+        
+        // En una implementación real, aquí llamarías a tu backend que:
+        // 1. Crearía una preferencia de pago en Mercado Pago
+        // 2. Devolvería el link de pago
+        
+        // Por ahora, creamos un link de ejemplo funcional
+        const preference = {
+            items: this.carrito.map(item => ({
+                title: item.nombre,
+                quantity: item.cantidad,
+                currency_id: "ARS",
+                unit_price: item.precio
+            })),
+            payer: {
+                name: document.getElementById("inputNombre")?.value || "Cliente",
+                email: "cliente@email.com" // En producción, pedirías el email
+            },
+            back_urls: {
+                success: window.location.href,
+                failure: window.location.href,
+                pending: window.location.href
+            },
+            auto_return: "approved",
+            payment_methods: {
+                excluded_payment_types: [],
+                installments: 12
+            },
+            statement_descriptor: "AUTOSERVICIO SCJ",
+            external_reference: `ORDER_${Date.now()}`
+        };
+        
+        // En desarrollo, devolvemos un link de ejemplo
+        // Reemplaza este link con tu link real de Mercado Pago
+        const linkId = Math.random().toString(36).substr(2, 9);
+        
+        // URL de ejemplo - en producción sería tu link real de MP
+        return `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${linkId}`;
+        
+        // NOTA: Para implementar realmente Mercado Pago:
+        // 1. Registrate en https://www.mercadopago.com.ar/developers
+        // 2. Obtén tus credenciales (Access Token)
+        // 3. Crea un endpoint en tu backend que use la API de MP
+        // 4. Reemplaza esta función para llamar a tu backend
+    }
+
+    // Función para abrir directamente Mercado Pago
+    abrirMercadoPago() {
+        // Validar datos del formulario
+        const nombreInput = document.getElementById("inputNombre");
+        const direccionInput = document.getElementById("inputDireccion");
+        const metodoEntrega = document.querySelector("input[name='metodoEntrega']:checked");
+
+        const nombre = nombreInput ? nombreInput.value.trim() : "";
+        const direccion = direccionInput ? direccionInput.value.trim() : "";
+        const entrega = metodoEntrega ? metodoEntrega.value : "";
+
+        if (!nombre || !direccion || !entrega) {
+            alert("Por favor completá todos los campos antes de proceder al pago.");
+            return;
+        }
+
+        // Guardar datos
+        localStorage.setItem("cliente_nombre", nombre);
+        localStorage.setItem("cliente_direccion", direccion);
+        localStorage.setItem("cliente_entrega", entrega);
+        localStorage.setItem("cliente_pago", "mercadopago");
+
+        // Generar link de Mercado Pago y abrirlo
+        const linkPago = this.generarLinkMercadoPago();
+        
+        // Mostrar confirmación
+        this.showOrderConfirmation();
+        
+        // Abrir link de pago en nueva ventana
+        window.open(linkPago, '_blank');
+        
+        // Vaciar carrito y cerrar modal después de un delay
+        setTimeout(() => {
+            this.carrito = [];
+            this.renderCartModal();
+            this.updateCartBadge();
+            const modal = bootstrap.Modal.getInstance(document.getElementById("cartModal"));
+            if (modal) modal.hide();
+        }, 2000);
+    }
+
     // Añadir este nuevo método para mostrar la confirmación
     showOrderConfirmation() {
         // Crear el elemento de confirmación
@@ -849,7 +1477,7 @@ class CatalogoApp {
                 <p>Tu pedido está siendo procesado.</p>
             </div>
         `;
-        
+
         // Agregar estilos inline para el elemento
         confirmationElement.style.position = 'fixed';
         confirmationElement.style.top = '50%';
@@ -863,20 +1491,20 @@ class CatalogoApp {
         confirmationElement.style.textAlign = 'center';
         confirmationElement.style.opacity = '0';
         confirmationElement.style.transition = 'opacity 0.3s ease';
-        
+
         // Agregar al DOM
         document.body.appendChild(confirmationElement);
-        
+
         // Inicializar iconos
         if (typeof lucide !== "undefined") {
             lucide.createIcons();
         }
-        
+
         // Mostrar con animación
         setTimeout(() => {
             confirmationElement.style.opacity = '1';
         }, 10);
-        
+
         // Ocultar después de 3 segundos
         setTimeout(() => {
             confirmationElement.style.opacity = '0';
@@ -893,11 +1521,15 @@ class CatalogoApp {
     cargarDatosCliente() {
         const nombre = localStorage.getItem("cliente_nombre") || "";
         const direccion = localStorage.getItem("cliente_direccion") || "";
+        const pago = localStorage.getItem("cliente_pago") || "efectivo";
+        
         const nombreInput = document.getElementById("inputNombre");
         const direccionInput = document.getElementById("inputDireccion");
+        const pagoInput = document.querySelector(`input[name="metodoPago"][value="${pago}"]`);
 
         if (nombreInput) nombreInput.value = nombre;
         if (direccionInput) direccionInput.value = direccion;
+        if (pagoInput) pagoInput.checked = true;
     }
 
     // Función para mostrar notificación cuando se agrega un producto
@@ -1054,17 +1686,627 @@ class CatalogoApp {
             lucide.createIcons();
         }
     }
+
+    // ====== MODAL DE PRODUCTO ======
+    showProductModal(productId) {
+        const producto = this.productos.find(p => p.id === productId);
+        if (!producto) {
+            console.error('Producto no encontrado:', productId);
+            return;
+        }
+
+        // Actualizar contenido del modal
+        document.getElementById('productModalTitle').textContent = producto.name;
+        document.getElementById('productModalCategory').textContent = producto.category;
+        document.getElementById('productModalDescription').textContent = producto.description;
+        document.getElementById('productModalPrice').textContent = `$${producto.price.toLocaleString()}`;
+        
+        const modalImage = document.getElementById('productModalImage');
+        modalImage.src = producto.image;
+        modalImage.alt = producto.name;
+        
+        // Configurar badge de oferta
+        const offerBadge = document.getElementById('productModalOffer');
+        if (producto.offer) {
+            offerBadge.style.display = 'block';
+            // Mostrar precio original si está en oferta
+            const originalPrice = Math.round(producto.price * 1.2); // Precio original estimado
+            const originalPriceElement = document.getElementById('productModalOriginalPrice');
+            if (originalPriceElement) {
+                originalPriceElement.textContent = `$${originalPrice.toLocaleString()}`;
+                originalPriceElement.style.display = 'inline';
+            }
+        } else {
+            offerBadge.style.display = 'none';
+            const originalPriceElement = document.getElementById('productModalOriginalPrice');
+            if (originalPriceElement) {
+                originalPriceElement.style.display = 'none';
+            }
+        }
+
+        // Configurar botón de favoritos
+        const favoriteBtn = document.getElementById('favoriteModalBtn');
+        const isFavorite = this.favoritos.includes(producto.id);
+        favoriteBtn.classList.toggle('active', isFavorite);
+        
+        // Reiniciar cantidad a 1
+        document.getElementById('productQuantity').value = 1;
+        
+        // Configurar eventos del modal
+        this.setupProductModalEvents(producto);
+        
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('productModal'));
+        modal.show();
+        
+        // Recrear iconos
+        lucide.createIcons();
+    }
+
+    setupProductModalEvents(producto) {
+        // Botones de cantidad
+        const decreaseBtn = document.getElementById('decreaseQty');
+        const increaseBtn = document.getElementById('increaseQty');
+        const quantityInput = document.getElementById('productQuantity');
+
+        // Limpiar eventos anteriores
+        decreaseBtn.replaceWith(decreaseBtn.cloneNode(true));
+        increaseBtn.replaceWith(increaseBtn.cloneNode(true));
+        
+        // Obtener referencias actualizadas
+        const newDecreaseBtn = document.getElementById('decreaseQty');
+        const newIncreaseBtn = document.getElementById('increaseQty');
+
+        newDecreaseBtn.addEventListener('click', () => {
+            const currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+
+        newIncreaseBtn.addEventListener('click', () => {
+            const currentValue = parseInt(quantityInput.value);
+            if (currentValue < 10) {
+                quantityInput.value = currentValue + 1;
+            }
+        });
+
+        // Botón de favoritos
+        const favoriteBtn = document.getElementById('favoriteModalBtn');
+        favoriteBtn.replaceWith(favoriteBtn.cloneNode(true));
+        
+        document.getElementById('favoriteModalBtn').addEventListener('click', () => {
+            this.toggleFavorito(producto.id);
+            const isFavorite = this.favoritos.includes(producto.id);
+            document.getElementById('favoriteModalBtn').classList.toggle('active', isFavorite);
+            lucide.createIcons();
+        });
+
+        // Botón agregar al carrito
+        const addToCartBtn = document.getElementById('addToCartModalBtn');
+        addToCartBtn.replaceWith(addToCartBtn.cloneNode(true));
+        
+        document.getElementById('addToCartModalBtn').addEventListener('click', () => {
+            const quantity = parseInt(quantityInput.value);
+            for (let i = 0; i < quantity; i++) {
+                this.addToCart(producto.id);
+            }
+            
+            // Cerrar modal después de agregar
+            const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            modal.hide();
+            
+            // Mostrar notificación
+            this.showAddToCartNotification(`${quantity} ${producto.name}(s) agregado(s) al carrito`);
+        });
+
+        // Botón comprar ahora
+        const buyNowBtn = document.getElementById('buyNowBtn');
+        buyNowBtn.replaceWith(buyNowBtn.cloneNode(true));
+        
+        document.getElementById('buyNowBtn').addEventListener('click', () => {
+            const quantity = parseInt(quantityInput.value);
+            
+            // Agregar al carrito
+            for (let i = 0; i < quantity; i++) {
+                this.addToCart(producto.id);
+            }
+            
+            // Cerrar modal de producto
+            const productModal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            productModal.hide();
+            
+            // Abrir modal del carrito después de un breve delay
+            setTimeout(() => {
+                const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+                cartModal.show();
+            }, 300);
+            
+            // Mostrar notificación
+            this.showAddToCartNotification(`${quantity} ${producto.name}(s) agregado(s) al carrito`);
+        });
+    }
+
+    openFavoritesModal() {
+        try {
+            this.renderFavoritesModal();
+            
+            const modalElement = document.getElementById("favoritesModal");
+            if (!modalElement) {
+                console.error("❌ No se encontró el elemento del modal de favoritos");
+                return;
+            }
+            
+            const favoritesModal = new bootstrap.Modal(modalElement);
+            favoritesModal.show();
+        } catch (error) {
+            console.error("❌ Error al abrir modal de favoritos:", error);
+        }
+    }
+
+    // ====== FUNCIONES PARA EL MODAL DE FAVORITOS ======
+    renderFavoritesModal() {
+        const emptyFavorites = document.getElementById("emptyFavorites");
+        const favoritesItems = document.getElementById("favoritesItems");
+        const favoritesCount = document.getElementById("favoritesCount");
+        const exportBtn = document.getElementById("exportFavoritesBtn");
+        const clearBtn = document.getElementById("clearFavoritesBtn");
+
+        // Verificar que todos los elementos existen
+        if (!emptyFavorites || !favoritesItems || !favoritesCount) {
+            console.error("Elementos del modal de favoritos no encontrados en el DOM");
+            return;
+        }
+
+        // Actualizar contador
+        favoritesCount.textContent = this.favoritos.length;
+
+        if (this.favoritos.length === 0) {
+            emptyFavorites.style.display = "block";
+            favoritesItems.style.display = "none";
+        } else {
+            emptyFavorites.style.display = "none";
+            favoritesItems.style.display = "block";
+            
+            // Renderizar productos favoritos
+            const favoritosProductos = this.productos.filter(producto => 
+                this.favoritos.includes(producto.id)
+            );
+            
+            favoritesItems.innerHTML = favoritosProductos.map(producto => 
+                this.createProductCard(producto, true)
+            ).join('');
+        }
+
+        // Event listeners para botones de exportar y limpiar
+        if (exportBtn) {
+            exportBtn.onclick = () => this.exportFavorites();
+        }
+        
+        if (clearBtn) {
+            clearBtn.onclick = () => this.clearAllFavorites();
+        }
+
+        // Recrear iconos de Lucide
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
+    }
+
+    // Función para actualizar el modal de favoritos si está abierto
+    updateFavoritesModalIfOpen() {
+        const favoritesModal = document.getElementById('favoritesModal');
+        if (favoritesModal && favoritesModal.classList.contains('show')) {
+            this.renderFavoritesModal();
+        }
+    }
+
+    exportFavorites() {
+        if (this.favoritos.length === 0) {
+            this.showToast('Sin favoritos', 'No tienes productos favoritos para exportar', 'warning');
+            return;
+        }
+
+        const favoritosProductos = this.productos.filter(producto => 
+            this.favoritos.includes(producto.id)
+        );
+
+        // Crear datos para exportar
+        const exportData = {
+            fecha: new Date().toLocaleDateString('es-ES'),
+            totalProductos: favoritosProductos.length,
+            productos: favoritosProductos.map(producto => ({
+                id: producto.id,
+                nombre: producto.name,
+                categoria: producto.category,
+                precio: producto.price,
+                marca: producto.brand || 'Sin marca',
+                descripcion: producto.description
+            }))
+        };
+
+        // Crear archivo JSON
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        // Crear enlace de descarga
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `favoritos_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        this.showToast('Favoritos exportados', `Se descargó el archivo con ${favoritosProductos.length} productos`, 'success');
+    }
+
+    clearAllFavorites() {
+        if (this.favoritos.length === 0) {
+            this.showToast('Sin favoritos', 'No tienes productos favoritos para limpiar', 'warning');
+            return;
+        }
+
+        if (confirm(`¿Estás seguro que deseas eliminar todos los ${this.favoritos.length} productos favoritos?`)) {
+            this.favoritos = [];
+            this.saveFavoritos();
+            this.updateFavoritesBadge();
+            this.renderFavoritesModal();
+            this.renderOfertas();
+            this.renderProductos();
+            
+            this.showToast('Favoritos limpiados', 'Se eliminaron todos los productos favoritos', 'success');
+        }
+    }
+
+    // Función auxiliar para crear tarjetas de producto (reutilizable)
+    createProductCard(producto, isInFavoritesModal = false) {
+        const isFavorite = this.favoritos.includes(producto.id);
+        const cardClass = isInFavoritesModal ? 'product-card h-100 animate-fade-in-scale favorites-card' : 'product-card h-100 animate-fade-in-scale';
+        
+        return `
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="${cardClass}">
+                    ${producto.offer ? '<div class="offer-badge">¡Oferta!</div>' : ''}
+                    ${isInFavoritesModal ? '<div class="favorite-indicator"><i data-lucide="heart" width="16" height="16"></i></div>' : ''}
+                    <div class="product-image-container">
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                                onclick="app.toggleFavorito(${producto.id})" 
+                                title="${isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}">
+                            <i data-lucide="heart" width="16" height="16"></i>
+                        </button>
+                        <img src="${producto.image}" 
+                             alt="${producto.name}" 
+                             class="product-image"
+                             onerror="this.src='https://via.placeholder.com/200x200/f8f9fa/dc3545?text=Sin+Imagen'">
+                    </div>
+                    <div class="card-body">
+                        <div class="product-category">${producto.category}</div>
+                        <h6 class="product-title">${producto.name}</h6>
+                        <p class="product-description">${producto.description}</p>
+                        <div class="price-section">
+                            <div class="price-badge">$${producto.price}</div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="app.showProductModal(${producto.id})">
+                                    <i data-lucide="eye" width="16" height="16" class="me-1"></i>
+                                    Ver Producto
+                                </button>
+                                <button class="btn btn-add-cart" onclick="app.agregarAlCarrito(${producto.id})">
+                                    <i data-lucide="shopping-cart" width="16" height="16" class="me-1"></i>
+                                    Agregar al Carrito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ====== FUNCIONES DEL CARRUSEL ======
+    initCarousel() {
+        this.renderCarousel();
+        this.startAutoSlide();
+        this.setupCarouselEventListeners();
+        this.updateAutoIndicator();
+    }
+
+    renderCarousel() {
+        const carousel = document.getElementById('offersCarousel');
+        const indicators = document.getElementById('carouselIndicators');
+        
+        if (!carousel || !indicators) return;
+
+        // Obtener productos en oferta
+        const ofertas = this.productos.filter(producto => producto.offer);
+        
+        if (ofertas.length === 0) {
+            carousel.innerHTML = '<div class="text-center p-4"><p class="text-muted">No hay ofertas disponibles</p></div>';
+            indicators.innerHTML = '';
+            return;
+        }
+
+        // Renderizar slides
+        carousel.innerHTML = ofertas.map((producto, index) => {
+            const isFavorite = this.favoritos.includes(producto.id);
+            return `
+                <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-slide="${index}">
+                    <div class="offer-badge">¡OFERTA!</div>
+                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                            onclick="app.toggleFavorito(${producto.id})" 
+                            title="${isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}">
+                        <i data-lucide="heart" width="16" height="16"></i>
+                    </button>
+                    <img src="${producto.image}" 
+                         alt="${producto.name}" 
+                         class="carousel-slide-image"
+                         onerror="this.src='https://via.placeholder.com/280x180/f8f9fa/dc3545?text=Oferta'">
+                    <div class="carousel-slide-content">
+                        <div class="carousel-slide-category">${producto.category}</div>
+                        <h5 class="carousel-slide-title">${producto.name}</h5>
+                        <p class="carousel-slide-description">${producto.description}</p>
+                        <div class="carousel-slide-price">$${producto.price.toLocaleString()}</div>
+                        <div class="carousel-slide-actions">
+                            <button class="btn btn-outline-primary btn-sm" onclick="app.showProductModal(${producto.id})">
+                                <i data-lucide="eye" width="14" height="14" class="me-1"></i>
+                                Ver Producto
+                            </button>
+                            <button class="btn btn-add-cart btn-sm" onclick="app.agregarAlCarrito(${producto.id})">
+                                <i data-lucide="shopping-cart" width="14" height="14" class="me-1"></i>
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Renderizar indicadores
+        indicators.innerHTML = ofertas.map((_, index) => 
+            `<div class="carousel-indicator ${index === 0 ? 'active' : ''}" data-slide="${index}"></div>`
+        ).join('');
+
+        // Agregar event listeners a los indicadores
+        indicators.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
+            indicator.addEventListener('click', () => this.goToSlide(index));
+        });
+
+        // Inicializar posición
+        this.updateCarouselPosition();
+        
+        // Recrear iconos
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
+    }
+
+    updateCarouselPosition() {
+        const carousel = document.getElementById('offersCarousel');
+        if (!carousel) return;
+
+        const slides = carousel.querySelectorAll('.carousel-slide');
+        const slideWidth = 280 + 24; // width + gap
+        const offset = -this.currentSlide * slideWidth;
+        
+        carousel.style.transform = `translateX(${offset}px)`;
+
+        // Actualizar indicadores
+        document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === this.currentSlide);
+        });
+
+        // Actualizar botones de navegación
+        const prevBtn = document.getElementById('carouselPrev');
+        const nextBtn = document.getElementById('carouselNext');
+        
+        if (prevBtn) prevBtn.disabled = this.currentSlide === 0;
+        if (nextBtn) nextBtn.disabled = this.currentSlide >= slides.length - this.getSlidesPerView();
+    }
+
+    getSlidesPerView() {
+        const width = window.innerWidth;
+        if (width < 480) return 1;
+        if (width < 768) return 2;
+        if (width < 1024) return 3;
+        return 4;
+    }
+
+    nextSlide() {
+        const totalSlides = document.querySelectorAll('.carousel-slide').length;
+        const maxSlide = Math.max(0, totalSlides - this.getSlidesPerView());
+        
+        if (this.currentSlide < maxSlide) {
+            this.currentSlide++;
+            this.updateCarouselPosition();
+            this.resetAutoSlide();
+        }
+    }
+
+    prevSlide() {
+        if (this.currentSlide > 0) {
+            this.currentSlide--;
+            this.updateCarouselPosition();
+            this.resetAutoSlide();
+        }
+    }
+
+    goToSlide(index) {
+        const totalSlides = document.querySelectorAll('.carousel-slide').length;
+        const maxSlide = Math.max(0, totalSlides - this.getSlidesPerView());
+        
+        this.currentSlide = Math.min(index, maxSlide);
+        this.updateCarouselPosition();
+        this.resetAutoSlide();
+    }
+
+    startAutoSlide() {
+        if (!this.isAutoSliding) return;
+        
+        this.autoSlideInterval = setInterval(() => {
+            const totalSlides = document.querySelectorAll('.carousel-slide').length;
+            const maxSlide = Math.max(0, totalSlides - this.getSlidesPerView());
+            
+            if (this.currentSlide < maxSlide) {
+                this.nextSlide();
+            } else {
+                this.currentSlide = 0;
+                this.updateCarouselPosition();
+            }
+        }, 7000); // Cambiar slide cada 7 segundos (más despacio)
+    }
+
+    stopAutoSlide() {
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+            this.autoSlideInterval = null;
+        }
+    }
+
+    resetAutoSlide() {
+        this.stopAutoSlide();
+        if (this.isAutoSliding) {
+            setTimeout(() => this.startAutoSlide(), 3000); // Pausa más larga después de interacción
+        }
+    }
+
+    setupCarouselEventListeners() {
+        const carousel = document.getElementById('offersCarousel');
+        if (!carousel) return;
+
+        // Pausar auto-slide al hover
+        carousel.addEventListener('mouseenter', () => this.stopAutoSlide());
+        carousel.addEventListener('mouseleave', () => {
+            if (this.isAutoSliding) this.startAutoSlide();
+        });
+
+        // Responsive: actualizar al cambiar tamaño de ventana
+        window.addEventListener('resize', () => {
+            this.updateCarouselPosition();
+        });
+
+        // Touch/swipe support para móviles
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            this.stopAutoSlide();
+        });
+
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+            e.preventDefault();
+        });
+
+        carousel.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const diff = startX - currentX;
+            const threshold = 50;
+            
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    this.nextSlide();
+                } else {
+                    this.prevSlide();
+                }
+            }
+            
+            this.resetAutoSlide();
+        });
+    }
+
+    toggleAutoSlide() {
+        this.isAutoSliding = !this.isAutoSliding;
+        
+        if (this.isAutoSliding) {
+            this.startAutoSlide();
+        } else {
+            this.stopAutoSlide();
+        }
+        
+        this.updateAutoIndicator();
+    }
+
+    updateAutoIndicator() {
+        const autoIndicator = document.getElementById('autoIndicator');
+        if (!autoIndicator) return;
+
+        const icon = autoIndicator.querySelector('i');
+        const text = autoIndicator.childNodes[autoIndicator.childNodes.length - 1];
+        
+        if (this.isAutoSliding) {
+            if (icon) icon.setAttribute('data-lucide', 'play');
+            if (text) text.textContent = ' Auto';
+            autoIndicator.style.backgroundColor = 'rgba(34, 197, 94, 0.8)';
+        } else {
+            if (icon) icon.setAttribute('data-lucide', 'pause');
+            if (text) text.textContent = ' Pausa';
+            autoIndicator.style.backgroundColor = 'rgba(239, 68, 68, 0.8)';
+        }
+        
+        // Recrear iconos
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 10);
+    }
 }
 
 // Instanciar la aplicación una sola vez cuando el DOM esté listo
 let app;
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-        app = new CatalogoApp();
-        window.app = app;
-    });
-} else {
+// Función para inicializar la aplicación
+function initializeApp() {
+    // Evitar múltiples inicializaciones
+    if (app) {
+        console.log('Aplicación ya inicializada');
+        return;
+    }
+    
+    // Verificar que el DOM esté completamente listo
+    if (!document.getElementById('themeToggle')) {
+        // Si elementos críticos no están listos, esperar un poco más
+        console.log('DOM no está listo, esperando...');
+        setTimeout(initializeApp, 100);
+        return;
+    }
+
+    console.log('Inicializando aplicación...');
     app = new CatalogoApp();
     window.app = app;
 }
+
+// Inicialización robusta
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeApp);
+} else if (document.readyState === "interactive" || document.readyState === "complete") {
+    // DOM ya está listo
+    setTimeout(initializeApp, 10);
+} else {
+    // Fallback
+    setTimeout(initializeApp, 100);
+}
+
+// Inicialización adicional cuando Lucide esté disponible
+function ensureLucideReady() {
+    if (typeof lucide !== 'undefined') {
+        // Solo recrear iconos, no llamar initTheme para evitar bucles
+        lucide.createIcons();
+    } else {
+        setTimeout(ensureLucideReady, 100);
+    }
+}
+
+// Esperar a que Lucide esté disponible
+setTimeout(ensureLucideReady, 200);
